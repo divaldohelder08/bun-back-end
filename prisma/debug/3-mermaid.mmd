@@ -1,0 +1,124 @@
+erDiagram
+
+        StatusEnum {
+            Andamento Andamento
+Finalizada Finalizada
+NFinalizada NFinalizada
+        }
+    
+
+
+        TimeEnum {
+            On On
+Chuva Chuva
+Noite Noite
+Feriado Feriado
+Brecha Brecha
+        }
+    
+  "Filias" {
+    String id "🗝️"
+    String nome 
+    String endereco 
+    TimeEnum status 
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+
+  "auth_links_admin" {
+    String id "🗝️"
+    String code 
+    DateTime createdAt 
+    }
+  
+
+  "Funcionarios" {
+    String id "🗝️"
+    String nome 
+    String email 
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+
+  "Motoristas" {
+    String id "🗝️"
+    String nome 
+    String email "❓"
+    String senha 
+    String codigo "❓"
+    String telefone 
+    String numeroBI 
+    DateTime nascimento 
+    String avatar "❓"
+    String localizacao 
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+
+  "Veiculo" {
+    String id "🗝️"
+    String matricula 
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+
+  "Clientes" {
+    String id "🗝️"
+    String nome 
+    String email 
+    String numeroBI 
+    String avatar "❓"
+    String endereco 
+    String Coordenadadacasa 
+    DateTime nascimento 
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+
+  "Contacto dos Clientes" {
+    String id "🗝️"
+    String telefone 
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+
+  "Contacto das cooperativas" {
+    String id "🗝️"
+    String telefone 
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+
+  "Recolhas" {
+    String id "🗝️"
+    StatusEnum status 
+    String descricao "❓"
+    DateTime createdAt 
+    DateTime updatedAt 
+    }
+  
+    "Filias" o|--|| "TimeEnum" : "enum:status"
+    "Filias" o{--}o "Clientes" : "clientes"
+    "Filias" o{--}o "Motoristas" : "motoristas"
+    "Filias" o{--}o "Funcionarios" : "Adm"
+    "Filias" o{--}o "Contacto das cooperativas" : "contacto"
+    "auth_links_admin" o|--|| "Funcionarios" : "admin"
+    "Funcionarios" o|--|| "Filias" : "filial"
+    "Funcionarios" o{--}o "auth_links_admin" : "authLinksAdmin"
+    "Motoristas" o|--|| "Filias" : "filial"
+    "Motoristas" o{--}o "Recolhas" : "recolhas"
+    "Clientes" o|--|| "Filias" : "filial"
+    "Clientes" o{--}o "Contacto dos Clientes" : "contacto"
+    "Clientes" o{--}o "Recolhas" : "recolhas"
+    "Contacto dos Clientes" o|--|| "Clientes" : "cliente"
+    "Contacto das cooperativas" o|--|| "Filias" : "autor"
+    "Recolhas" o|--|| "StatusEnum" : "enum:status"
+    "Recolhas" o|--|| "Clientes" : "cliente"
+    "Recolhas" o|--|| "Motoristas" : "motorista"

@@ -1,0 +1,42 @@
+{
+  "name": "pizzashop",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "bun --watch src/http/server.ts",
+    "migrate": "bun src/db/migrate.ts",
+    "seed": "bun src/db/seed.ts"
+  },
+  "prisma": {
+    "seed": "bun prisma/seed.ts"
+  },
+  "author": "divaldo helder  <divaldohelder08@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@elysiajs/cookie": "^0.7.0",
+    "@elysiajs/cors": "^0.7.2",
+    "@elysiajs/jwt": "^0.7.0",
+    "@paralleldrive/cuid2": "2.2.2",
+    "@prisma/client": "^5.7.1",
+    "@react-email/components": "^0.0.11",
+    "dayjs": "^1.11.10",
+    "elysia": "0.7.29",
+    "postgres": "3.4.3",
+    "prisma": "^5.7.1",
+    "react": "^18.2.0",
+    "resend": "^2.0.0",
+    "zod": "3.22.4"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "8.3.1",
+    "@mermaid-js/mermaid-cli": "^10.6.1",
+    "@rocketseat/eslint-config": "2.1.0",
+    "@types/react": "^18.2.39",
+    "bun-types": "^1.0.18-1",
+    "chalk": "5.3.0",
+    "eslint": "8.54.0",
+    "prisma-erd-generator": "^1.11.2",
+    "typescript": "5.3.2"
+  }
+}
