@@ -1,17 +1,19 @@
 {
-  "name": "pizzashop",
+  "name": "bun-mukumbo-backend",
   "type": "module",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "dev": "bun --watch src/http/server.ts",
-    "migrate": "bun src/db/migrate.ts",
-    "seed": "bun src/db/seed.ts"
+    "migrate": "bun prisma migrate dev",
+    "migSeed": "bun prisma migrate dev --name init",
+    "seed": "bun prisma/seed.ts",
+    "biome:check": "biome check teste.ts"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
   },
-  "author": "divaldo helder  <divaldohelder08@gmail.com>",
+  "author": "Divaldo Hélder  <divaldohelder08@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@elysiajs/cookie": "^0.7.0",
@@ -29,6 +31,7 @@
     "zod": "3.22.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.4.1",
     "@faker-js/faker": "8.3.1",
     "@mermaid-js/mermaid-cli": "^10.6.1",
     "@rocketseat/eslint-config": "2.1.0",

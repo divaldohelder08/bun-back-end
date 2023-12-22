@@ -1,0 +1,7 @@
+POST http://localhost:3333/admin/authenticate 
+Content-Type: application/json
+
+{
+  "email": "divaldohelder08@gmail.com", 
+  "filial_id": "clqgttl0z000353pu7sxzl0tl"
+}
