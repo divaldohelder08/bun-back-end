@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('Andamento', 'Finalizada', 'NFinalizada');
+CREATE TYPE "Status" AS ENUM ('pendente', 'andamento', 'cancelado', 'finalizada');
 
 -- CreateEnum
 CREATE TYPE "FilialStatus" AS ENUM ('On', 'Chuva', 'Noite');
@@ -20,7 +20,7 @@ CREATE TABLE "auth_link_manager" (
 -- CreateTable
 CREATE TABLE "manager" (
     "id" TEXT NOT NULL,
-    "nome" VARCHAR(250) NOT NULL,
+    "name" VARCHAR(250) NOT NULL,
     "email" TEXT NOT NULL,
     "role" "RoleEnum" NOT NULL DEFAULT 'gerente',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -33,9 +33,9 @@ CREATE TABLE "manager" (
 CREATE TABLE "filias" (
     "id" TEXT NOT NULL,
     "manager_id" TEXT NOT NULL,
-    "nome" VARCHAR(100) NOT NULL,
-    "telefone" VARCHAR(9) NOT NULL,
-    "endereco" TEXT NOT NULL,
+    "name" VARCHAR(100) NOT NULL,
+    "tel" VARCHAR(9) NOT NULL,
+    "address" TEXT NOT NULL,
     "status" "FilialStatus" NOT NULL DEFAULT 'On',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -54,58 +54,68 @@ CREATE TABLE "Veiculo" (
 );
 
 -- CreateTable
-CREATE TABLE "Motoristas" (
+CREATE TABLE "auth_link_driver" (
+    "id" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
+    "driver_id" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "auth_link_driver_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "driver" (
     "id" TEXT NOT NULL,
     "filial_id" TEXT NOT NULL,
-    "numero_bi" VARCHAR(13) NOT NULL,
+    "numberBI" VARCHAR(13) NOT NULL,
     "veicolo_id" TEXT NOT NULL,
-    "nome" VARCHAR(150) NOT NULL,
+    "name" VARCHAR(150) NOT NULL,
     "email" TEXT,
     "coordenadas" DOUBLE PRECISION[],
     "senha" TEXT NOT NULL,
-    "telefone" VARCHAR(9) NOT NULL,
+    "tel" VARCHAR(9) NOT NULL,
     "nascimento" TIMESTAMP(3) NOT NULL,
     "avatar" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Motoristas_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "driver_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Clientes" (
+CREATE TABLE "clientes" (
     "id" TEXT NOT NULL,
     "filial_id" TEXT NOT NULL,
-    "nome" VARCHAR(250) NOT NULL,
+    "name" VARCHAR(250) NOT NULL,
     "email" TEXT NOT NULL,
-    "numero_bi" VARCHAR(13) NOT NULL,
-    "telefone" VARCHAR(9) NOT NULL,
+    "number_bi" VARCHAR(13) NOT NULL,
+    "tel" VARCHAR(9) NOT NULL,
     "avatar" TEXT,
-    "endereco" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
     "coordenadas" DOUBLE PRECISION[],
     "nascimento" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Clientes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "clientes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Recolhas" (
+CREATE TABLE "recolhas" (
     "id" TEXT NOT NULL,
     "cliente_id" TEXT NOT NULL,
     "motorista_id" TEXT NOT NULL,
     "filial_id" TEXT NOT NULL,
-    "status" "Status" NOT NULL DEFAULT 'Andamento',
-    "coordenadas" DOUBLE PRECISION[],
-    "descricao" TEXT,
+    "status" "Status" NOT NULL DEFAULT 'andamento',
+    "comment" TEXT,
+    "rate" INTEGER NOT NULL,
     "distance" DOUBLE PRECISION NOT NULL,
     "duration" DOUBLE PRECISION NOT NULL,
     "directions" JSONB NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Recolhas_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "recolhas_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -118,37 +128,40 @@ CREATE UNIQUE INDEX "manager_email_key" ON "manager"("email");
 CREATE UNIQUE INDEX "filias_manager_id_key" ON "filias"("manager_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "filias_nome_key" ON "filias"("nome");
+CREATE UNIQUE INDEX "filias_name_key" ON "filias"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "filias_telefone_key" ON "filias"("telefone");
+CREATE UNIQUE INDEX "filias_tel_key" ON "filias"("tel");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "filias_endereco_key" ON "filias"("endereco");
+CREATE UNIQUE INDEX "filias_address_key" ON "filias"("address");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Veiculo_matricula_key" ON "Veiculo"("matricula");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Motoristas_numero_bi_key" ON "Motoristas"("numero_bi");
+CREATE UNIQUE INDEX "auth_link_driver_code_key" ON "auth_link_driver"("code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Motoristas_veicolo_id_key" ON "Motoristas"("veicolo_id");
+CREATE UNIQUE INDEX "driver_numberBI_key" ON "driver"("numberBI");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Motoristas_email_key" ON "Motoristas"("email");
+CREATE UNIQUE INDEX "driver_veicolo_id_key" ON "driver"("veicolo_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Motoristas_telefone_key" ON "Motoristas"("telefone");
+CREATE UNIQUE INDEX "driver_email_key" ON "driver"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Clientes_email_key" ON "Clientes"("email");
+CREATE UNIQUE INDEX "driver_tel_key" ON "driver"("tel");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Clientes_numero_bi_key" ON "Clientes"("numero_bi");
+CREATE UNIQUE INDEX "clientes_email_key" ON "clientes"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Clientes_telefone_key" ON "Clientes"("telefone");
+CREATE UNIQUE INDEX "clientes_number_bi_key" ON "clientes"("number_bi");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "clientes_tel_key" ON "clientes"("tel");
 
 -- AddForeignKey
 ALTER TABLE "auth_link_manager" ADD CONSTRAINT "auth_link_manager_manager_id_fkey" FOREIGN KEY ("manager_id") REFERENCES "manager"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -157,19 +170,22 @@ ALTER TABLE "auth_link_manager" ADD CONSTRAINT "auth_link_manager_manager_id_fke
 ALTER TABLE "filias" ADD CONSTRAINT "filias_manager_id_fkey" FOREIGN KEY ("manager_id") REFERENCES "manager"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Motoristas" ADD CONSTRAINT "Motoristas_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "auth_link_driver" ADD CONSTRAINT "auth_link_driver_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "driver"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Motoristas" ADD CONSTRAINT "Motoristas_veicolo_id_fkey" FOREIGN KEY ("veicolo_id") REFERENCES "Veiculo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "driver" ADD CONSTRAINT "driver_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Clientes" ADD CONSTRAINT "Clientes_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "driver" ADD CONSTRAINT "driver_veicolo_id_fkey" FOREIGN KEY ("veicolo_id") REFERENCES "Veiculo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Recolhas" ADD CONSTRAINT "Recolhas_cliente_id_fkey" FOREIGN KEY ("cliente_id") REFERENCES "Clientes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "clientes" ADD CONSTRAINT "clientes_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Recolhas" ADD CONSTRAINT "Recolhas_motorista_id_fkey" FOREIGN KEY ("motorista_id") REFERENCES "Motoristas"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_cliente_id_fkey" FOREIGN KEY ("cliente_id") REFERENCES "clientes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Recolhas" ADD CONSTRAINT "Recolhas_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_motorista_id_fkey" FOREIGN KEY ("motorista_id") REFERENCES "driver"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE SET NULL ON UPDATE CASCADE;

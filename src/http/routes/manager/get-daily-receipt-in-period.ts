@@ -1,64 +1,68 @@
-import { db } from '@/db/connection'
-import dayjs from 'dayjs'
-import { and, eq, gte, lte, sql, sum } from 'drizzle-orm'
-import Elysia, { t } from 'elysia'
-import { orders } from 'schema'
-import { authentication } from '../authentication'
+import { db } from "@/db/connection";
+import dayjs from "dayjs";
+import Elysia, { t } from "elysia";
+import { authentication } from "./authentication";
 
 export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
-  '/metrics/daily-receipt-in-period',
-  async ({ getManagedRestaurantId, query, set }) => {
-    const restaurantId = await getManagedRestaurantId()
+  "/daily-receipt-in-period",
+  async ({ getManagedFilialId, query, set }) => {
+    const filialId = await getManagedFilialId();
 
-    const { from, to } = query
+    const { from, to } = query;
 
-    const startDate = from ? dayjs(from) : dayjs().subtract(7, 'd')
-    const endDate = to ? dayjs(to) : from ? startDate.add(7, 'days') : dayjs()
+    const startDate = from ? dayjs(from) : dayjs().subtract(7, "d");
+    const endDate = to ? dayjs(to) : from ? startDate.add(7, "days") : dayjs();
 
-    if (endDate.diff(startDate, 'days') > 7) {
-      set.status = 400
+    if (endDate.diff(startDate, "days") > 7) {
+      set.status = 400;
 
       return {
-        code: 'INVALID_PERIOD',
-        message: 'O intervalo das datas não pode ser superior a 7 dias.',
-      }
+        code: "INVALID_PERIOD",
+        message: "O intervalo das datas não pode ser superior a 7 dias.",
+      };
     }
 
-    const receiptPerDay = await db
-      .select({
-        date: sql<string>`TO_CHAR(${orders.createdAt}, 'DD/MM')`,
-        receipt: sum(orders.totalInCents).mapWith(Number),
-      })
-      .from(orders)
-      .where(
-        and(
-          eq(orders.restaurantId, restaurantId),
-          gte(orders.createdAt, startDate.startOf('day').toDate()),
-          lte(orders.createdAt, endDate.endOf('day').toDate()),
-        ),
-      )
-      .groupBy(sql`TO_CHAR(${orders.createdAt}, 'DD/MM')`)
-      .having(({ receipt }) => gte(receipt, 1))
+    const receiptPerDay = await db.recolha.groupBy({
+      by: ["createdAt"],
+      where: {
+        filialId: filialId,
+        createdAt: {
+          gte: startDate.startOf("day").toDate(),
+          lte: endDate.endOf("day").toDate(),
+        },
+      },
+      _count: {
+        _all: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
 
-    const orderedReceiptPerDay = receiptPerDay.sort((a, b) => {
-      const [dayA, monthA] = a.date.split('/').map(Number)
-      const [dayB, monthB] = b.date.split('/').map(Number)
+    return receiptPerDay.sort((a, b) => {
+      const first = {
+        day: a.createdAt.getDate(),
+        month: a.createdAt.getMonth(),
+      };
+      const second = {
+        day: b.createdAt.getDate(),
+        month: b.createdAt.getMonth(),
+      };
 
-      if (monthA === monthB) {
-        return dayA - dayB
+      if (first.month === second.month) {
+        return first.day - second.day;
       }
-      const dateA = new Date(2023, monthA - 1)
-      const dateB = new Date(2023, monthB - 1)
 
-      return dateA.getTime() - dateB.getTime()
-    })
-
-    return orderedReceiptPerDay
+      return (
+        new Date(2023, first.month - 1).getTime() -
+        new Date(2023, second.month - 1).getTime()
+      );
+    });
   },
   {
     query: t.Object({
       from: t.Optional(t.String()),
       to: t.Optional(t.String()),
     }),
-  },
-)
+  }
+);

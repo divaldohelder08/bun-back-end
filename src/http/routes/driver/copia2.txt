@@ -1,0 +1,184 @@
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import z from "zod";
+// components
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { InputFull } from "@/components/ui/inputFull";
+import { Label } from "@/components/ui/label";
+import { CircleDashed, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { api } from "@/lib/axioBase";
+
+interface userProps {
+  id: string;
+  nome: string;
+  avatar: string | null;
+  mail: string | null;
+  createdAt: Date;
+  filialId: string;
+}
+
+
+const formDataschema = z.object({
+  email: z.string().min(1, "O e-mail é obrigatório").email("Formato invalido"),
+  password: z.string().min(1, "A senha é obrigatória"),
+});
+
+type formData = z.infer<typeof formDataschema>;
+
+export default function Login() {
+  const Router = useRouter();
+  const [password, setPassword] = useState<boolean>(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<formData>({
+    resolver: zodResolver(formDataschema),
+  });
+
+  function login<formData>(data: formData) {
+    api
+      .post<respo>("/driver/authenticate", data)
+      .then((response) => response.data)
+      .then((data) => {
+        console.log(data);
+        // Path;
+        Router.replace(`verify?email=${data.user.mail}`);
+      })
+      .catch((error) => console.error(error));
+    console.log(data);
+  }
+
+  return (
+    <div className="grid h-screen w-full items-center justify-center relative">
+      <div className="absolute top-10 left-10 hidden md:inline-block font-bold text-primary">
+        Motorista
+      </div>
+      <Card className="rounded-none border-none bg-transparent shadow-none">
+        <CardHeader className="space-y-1 text-center">
+          <Image
+            className="dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert mx-auto my-3.5 h-6 w-6"
+            src="/icon.svg"
+            alt="Mukumbo icon"
+            width={24}
+            height={24}
+            priority
+          />
+          <CardTitle className="text-2xl ">
+            Bem-vindo de <b className="text-primary">volta</b>
+          </CardTitle>
+          <CardDescription>
+            Recolha o seu Lixo com apenas um click Sem sair de casa!
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit(login)} method="GET">
+          <CardContent className="grid gap-4">
+            <div className=" grid gap-2">
+              <Label
+                className={errors.email && "text-destructive"}
+                htmlFor="email"
+              >
+                E-mail
+              </Label>
+              <InputFull.Root>
+                <InputFull.Icon icon={Mail} />
+                <Input
+                  id="email"
+                  required
+                  autoComplete="email"
+                  {...register("email")}
+                  placeholder="m@exemplo.com"
+                  className="pl-8"
+                />
+              </InputFull.Root>
+              {errors.email && (
+                <p className="text-[0.8rem] font-medium text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <div className="grid gap-2">
+              <Label
+                className={errors.password && "text-destructive"}
+                htmlFor="password"
+              >
+                Senha
+              </Label>
+              <InputFull.Root>
+                <InputFull.Icon icon={Lock} />
+                <Input
+                  id="password"
+                  required
+                  {...register("password")}
+                  autoComplete="password"
+                  type={password ? "text" : "password"}
+                  placeholder="Insira a sua senha"
+                  className="pl-8"
+                />
+                <span className=" absolute right-0 top-0 h-full bg-secondary w-8 grid place-items-center border-input border-l rounded-e-md cursor-pointer">
+                  {password ? (
+                    <EyeOff
+                      size="16"
+                      className="absolute"
+                      onClick={() => setPassword(false)}
+                    />
+                  ) : (
+                    <Eye
+                      size="16"
+                      className="absolute"
+                      onClick={() => setPassword(true)}
+                    />
+                  )}
+                </span>
+              </InputFull.Root>
+              {errors.password && (
+                <p className="text-[0.8rem] font-medium text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+            <Link
+              href="/api/reset_senha"
+              className="cursor-pointer  underline text-[0.8rem] "
+            >
+              Esqueceu a senha?
+            </Link>
+          </CardContent>
+          <CardFooter>
+            <Button
+              className="w-full"
+              size={"sm"}
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <CircleDashed
+                  className="motion-reduce:hidden animate-spin"
+                  size="20"
+                />
+              ) : (
+                "Entrar"
+              )}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>{" "}
+    </div>
+  );
+}

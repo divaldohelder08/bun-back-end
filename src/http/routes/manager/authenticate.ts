@@ -1,10 +1,7 @@
 import { db } from '@/db/connection'
 import { env } from '@/env'
-import { resend } from '@/mail/client'
-import { MagicLinkAuthTemplate } from '@/mail/templates/magic-link-auth-template'
 import { createId } from '@paralleldrive/cuid2'
 import Elysia, { t } from 'elysia'
-import { EmailNotSendedError } from '../errors/email-not-sended-error'
 import { UnauthorizedError } from '../errors/unauthorized-error'
 
 export const authenticate = new Elysia().post(
@@ -23,14 +20,16 @@ export const authenticate = new Elysia().post(
         manager: {
           select: {
             id: true,
-            nome: true,
+            name: true,
           },
         },
       },
     })
     if (!user) {
+      console.log('fora', user)
       throw new UnauthorizedError()
     }
+    console.log('dentro', user)
 
     const authLinkCode = createId()
 
@@ -40,10 +39,10 @@ export const authenticate = new Elysia().post(
 
     const authLink = new URL('/admin/auth-links/authenticate', env.API_BASE_URL)
     authLink.searchParams.set('code', authLinkCode)
-    authLink.searchParams.set('redirect', env.AUTH_REDIRECT_URL)
+    authLink.searchParams.set('redirect', env.AUTH_REDIRECT_URL_MANAGER)
     console.log(authLink.href)
 
-    const mail = await resend.emails.send({
+    await resend.emails.send({
       from: 'Mukumbo <naoresponda@fala.dev>',
       to: email,
       subject: '[Mukumbo] Link para login',
@@ -53,6 +52,7 @@ export const authenticate = new Elysia().post(
         username: user.manager.nome,
       }),
     })
+
     if (!mail) {
       throw new EmailNotSendedError()
     }

@@ -9,7 +9,7 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
   '/auth-links/authenticate',
   async ({ query, set, signUser }) => {
     const { code, redirect } = query
-    const authLinkFromCode = await db.authLinksManager.findFirst({
+    const authLinkFromCode = await db.authLinksDriver.findFirst({
       where: {
         code,
       },
@@ -28,17 +28,17 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
       throw new UnauthorizedError()
     }
 
-    const managedFilial = await db.filial.findFirst({
+    const driverFilial = await db.driver.findFirst({
       where: {
-        managerId: authLinkFromCode.managerId,
+        id: authLinkFromCode.driverId,
       },
     })
 
     await signUser({
-      sub: authLinkFromCode.managerId,
-      filialId: managedFilial?.id,
+      sub: authLinkFromCode.driverId,
+      filialId: driverFilial?.id,
     })
-    await db.authLinksManager.delete({
+    await db.authLinksDriver.delete({
       where: {
         code,
       },

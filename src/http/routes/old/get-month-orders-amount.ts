@@ -1,14 +1,14 @@
 import { db } from '@/db/connection'
+import { authentication } from '@/http/authentication'
 import dayjs from 'dayjs'
 import { and, count, eq, gte, sql } from 'drizzle-orm'
 import Elysia from 'elysia'
 import { orders } from 'schema'
-import { authentication } from '../authentication'
 
 export const getMonthOrdersAmount = new Elysia()
   .use(authentication)
-  .get('/metrics/month-orders-amount', async ({ getManagedRestaurantId }) => {
-    const restaurantId = await getManagedRestaurantId()
+  .get('/metrics/month-orders-amount', async ({ getManagedFIlialId }) => {
+    const filialId = await getManagedFIlialId()
 
     const today = dayjs()
     const lastMonth = today.subtract(1, 'month')
@@ -17,8 +17,8 @@ export const getMonthOrdersAmount = new Elysia()
     /**
      * January is ZERO, that's why we need to sum 1 to get the actual month
      */
-    const lastMonthWithYear = lastMonth.format('YYYY-MM')
-    const currentMonthWithYear = today.format('YYYY-MM')
+    const lastMonthWithYear = new Date(lastMonth.toISOString())
+    const currentMonthWithYear = new Date(today.toISOString())
 
     const ordersPerMonth = await db
       .select({
@@ -28,7 +28,7 @@ export const getMonthOrdersAmount = new Elysia()
       .from(orders)
       .where(
         and(
-          eq(orders.restaurantId, restaurantId),
+          eq(orders.filialId, filialId),
           gte(orders.createdAt, startOfLastMonth.toDate()),
         ),
       )

@@ -4,20 +4,16 @@
     "enabled": true
   },
   "formatter": {
-    "indentStyle": "space",
-    "lineWidth": 80
-  },
-  "javascript": {
-    "formatter": {
-      "semicolons": "asNeeded",
-      "quoteStyle": "single",
-      "arrowParentheses": "asNeeded",
+      "arrowParentheses":"always",
+      "jsxQuoteStyle": "double",
+      "semicolons": "always",
       "trailingComma": "all",
       "quoteProperties": "asNeeded",
       "bracketSpacing": true,
-      "bracketSameLine": false
-    }
-  },
+      "bracketSameLine": false,  
+      "indentStyle": "space",
+      "lineWidth": 80
+    },
   "linter": {
     "enabled": true,
     "rules": {

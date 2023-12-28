@@ -2,8 +2,8 @@ import { env } from '@/env'
 import cookie from '@elysiajs/cookie'
 import jwt from '@elysiajs/jwt'
 import Elysia, { Static, t } from 'elysia'
-import { NotAManagerError } from './routes/errors/not-a-manager-error'
-import { UnauthorizedError } from './routes/errors/unauthorized-error'
+import { NotAManagerError } from '../errors/not-a-manager-error'
+import { UnauthorizedError } from '../errors/unauthorized-error'
 
 const jwtPayloadSchema = t.Object({
   sub: t.String(),
@@ -35,7 +35,7 @@ export const authentication = new Elysia()
   .use(cookie())
   .derive(({ jwt, cookie, setCookie, removeCookie }) => {
     return {
-      getCurrentUser: async () => {
+      getCurrentDriver: async () => {
         const payload = await jwt.verify(cookie.auth)
 
         if (!payload) {
@@ -56,10 +56,10 @@ export const authentication = new Elysia()
       },
     }
   })
-  .derive(({ getCurrentUser }) => {
+  .derive(({ getCurrentDriver }) => {
     return {
-      getManagedRestaurantId: async () => {
-        const { filialId } = await getCurrentUser()
+      getManagedFIlialId: async () => {
+        const { filialId } = await getCurrentDriver()
 
         if (!filialId) {
           throw new NotAManagerError()

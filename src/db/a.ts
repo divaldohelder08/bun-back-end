@@ -1,17 +1,6 @@
-import dayjs from 'dayjs'
-import { db } from './connection'
+import { fakerPT_BR as faker } from "@faker-js/faker";
 
-const authLinkFromCode = await db.authLinksManager.findFirst({
-  where: {
-    code: 'hmhdy5dr6fjwd0fad18y9ry5',
-  },
-})
-if (!authLinkFromCode) {
-  console.log('UnauthorizedError')
-} else {
-  if (dayjs().diff(authLinkFromCode.createdAt, 'minute') > 5) {
-    console.log('expirado')
-  } else {
-    console.log('pedding')
-  }
-}
+// console.log(faker.helpers.fromRegExp(/[0-9]{1}/));
+setInterval(() => console.log(faker.helpers.fromRegExp(/[0-5]{1}/)), 200);
+
+// setInterval(() => console.log(faker.helpers.fromRegExp(/[0 - 6]/)), 200);

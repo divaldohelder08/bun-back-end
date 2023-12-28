@@ -1,21 +1,37 @@
 import { db } from '@/db/connection'
 import Elysia from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from './authentication'
 
 export const getProfile = new Elysia()
   .use(authentication)
-  .get('/me', async ({ getCurrentUser }) => {
-    const { sub: userId } = await getCurrentUser()
+  .get('/me', async ({ getCurrentManager }) => {
+    const { sub: managerId } = await getCurrentManager()
 
-    const user = await db.query.users.findFirst({
-      where(fields, { eq }) {
-        return eq(fields.id, userId)
+    const manager = await db.manager.findFirst({
+      where: {
+        id: managerId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        Filial: {
+          select: {
+            id: true,
+            address: true,
+            name: true,
+            status: true,
+            createdAt: true,
+          },
+        },
       },
     })
 
-    if (!user) {
-      throw new Error('User not found.')
+    if (!manager) {
+      throw new Error('Driver not found.')
     }
 
-    return user
+    return manager
   })
