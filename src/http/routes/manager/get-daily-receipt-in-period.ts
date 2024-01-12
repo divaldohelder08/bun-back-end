@@ -1,13 +1,12 @@
 import { db } from "@/db/connection";
+import { env } from "@/env";
 import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
 import { authentication } from "./authentication";
 
 export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
   "/daily-receipt-in-period",
-  async ({ getManagedFilialId, query, set }) => {
-    const filialId = await getManagedFilialId();
-
+  async ({ query, set }) => {
     const { from, to } = query;
 
     const startDate = from ? dayjs(from) : dayjs().subtract(7, "d");
@@ -25,7 +24,7 @@ export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
     const receiptPerDay = await db.recolha.groupBy({
       by: ["createdAt"],
       where: {
-        filialId: filialId,
+        filialId: env.FILIALID_BASE,
         createdAt: {
           gte: startDate.startOf("day").toDate(),
           lte: endDate.endOf("day").toDate(),

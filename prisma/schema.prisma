@@ -1,12 +1,14 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = ["postgresqlExtensions"]
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
+  // extensions = [postgis]
 }
 
 generator erd {
@@ -34,7 +36,7 @@ enum RoleEnum {
 }
 
 model authLinksManager {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   code      String   @unique
   managerId String   @map("manager_id")
   createdAt DateTime @default(now()) @map("created_at")
@@ -46,7 +48,8 @@ model authLinksManager {
 }
 
 model Manager {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
+  code      String?  @unique
   name      String   @db.VarChar(250)
   email     String   @unique
   role      RoleEnum @default(gerente)
@@ -61,34 +64,27 @@ model Manager {
 }
 
 model Filial {
-  id        String       @id @default(cuid())
-  managerId String       @unique @map("manager_id")
-  name      String       @unique @db.VarChar(100)
-  tel       String       @unique @db.VarChar(9)
-  address   String       @unique // enderço da filial da empresa
-  status    FilialStatus @default(On) //status da filial
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @updatedAt @map("updated_at")
+  id          String       @id @default(uuid())
+  managerId   String       @unique @map("manager_id")
+  name        String       @unique @db.VarChar(100)
+  tel         String       @unique @db.VarChar(9)
+  address     String       @unique // enderço da filial da empresa
+  status      FilialStatus @default(On) //status da filial
+  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision()
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
 
   //relações
   clientes Cliente[]
   drivers  Driver[]
   Recolha  Recolha[]
-  manager  Manager   @relation(fields: [managerId], references: [id], onDelete: SetNull)
+  manager  Manager   @relation(fields: [managerId], references: [id], onDelete: Cascade)
 
   @@map("filias")
 }
 
-model Veiculo {
-  id        String   @id @default(cuid())
-  matricula String   @unique @db.VarChar(8)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  drivers   Driver[]
-}
-
 model authLinksDriver {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   code      String   @unique
   driverId  String   @map("driver_id")
   createdAt DateTime @default(now()) @map("created_at")
@@ -99,14 +95,26 @@ model authLinksDriver {
   @@map("auth_link_driver")
 }
 
+model Veiculo {
+  id        String   @id @default(uuid())
+  matricula String   @unique @db.VarChar(11)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  Driver    Driver[]
+
+  @@map("veiculo")
+}
+
 model Driver {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
+  code        String?  @unique
   filialId    String   @map("filial_id")
+  veiculoId   String   @unique @map("veiculo_id")
   numberBI    String   @unique @map("numberBI") @db.VarChar(13)
-  veiculoId   String   @unique @map("veicolo_id")
   name        String   @db.VarChar(150)
-  email       String?  @unique
-  coordenadas Float[]  @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
+  email       String   @unique
+  coordenadas Float[]  @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
+  // location   Unsupported("geography(Point, 4326)")
   password    String   @map("senha")
   tel         String   @unique @db.VarChar(9)
   nascimento  DateTime
@@ -114,17 +122,25 @@ model Driver {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  //relações
   recolhas        Recolha[]
-  filial          Filial            @relation(fields: [filialId], references: [id], onDelete: Cascade)
-  veicolo         Veiculo           @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
   authLinksDriver authLinksDriver[]
+  veiculo         Veiculo           @relation(fields: [veiculoId], references: [id])
+  filial          Filial            @relation(fields: [filialId], references: [id], onDelete: Cascade)
 
   @@map("driver")
 }
 
+model Paiments {
+  id        String   @id @default(uuid())
+  clienteId String
+  duration  Int
+  endAt     DateTime @map("end_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  cliente   Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+}
+
 model Cliente {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   filialId    String   @map("filial_id")
   name        String   @db.VarChar(250)
   email       String   @unique
@@ -132,26 +148,28 @@ model Cliente {
   tel         String   @unique @db.VarChar(9)
   avatar      String?
   address     String //enderço da casa do cliente
-  coordenadas Float[]  @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
+  coordenadas Float[]  @default([0, 0]) @db.DoublePrecision()
+  // location   Unsupported("geography(Point, 4326)")
   nascimento  DateTime
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   //relações
   recolhas Recolha[]
-  filial   Filial    @relation(fields: [filialId], references: [id], onDelete: SetNull)
+  filial   Filial     @relation(fields: [filialId], references: [id], onDelete: Cascade)
+  Paiments Paiments[]
 
   @@map("clientes")
 }
 
 model Recolha {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
   clienteId  String   @map("cliente_id") // ñ esquecer de tirar o destino da recolha na lat e lgn do cliente
   driverId   String   @map("motorista_id")
   filialId   String   @map("filial_id")
   status     Status   @default(andamento)
   comment    String?  @db.Text
-  rate       Int
+  rate       Int?
   distance   Float
   duration   Float
   directions Json
@@ -159,9 +177,9 @@ model Recolha {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   //relações
-  cliente Cliente @relation(fields: [clienteId], references: [id], onDelete: SetNull)
-  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: SetNull)
-  filial  Filial  @relation(fields: [filialId], references: [id], onDelete: SetNull)
+  cliente Cliente @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  filial  Filial  @relation(fields: [filialId], references: [id], onDelete: Cascade)
 
   @@map("recolhas")
 }

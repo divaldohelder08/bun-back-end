@@ -9,6 +9,7 @@ const envSchema = z.object({
   JWT_SECRET_KEY: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   FILIALID_BASE: z.string(),
+  GOOGLE_MAPS_API_KEY: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

@@ -20,6 +20,7 @@ CREATE TABLE "auth_link_manager" (
 -- CreateTable
 CREATE TABLE "manager" (
     "id" TEXT NOT NULL,
+    "code" TEXT,
     "name" VARCHAR(250) NOT NULL,
     "email" TEXT NOT NULL,
     "role" "RoleEnum" NOT NULL DEFAULT 'gerente',
@@ -37,20 +38,11 @@ CREATE TABLE "filias" (
     "tel" VARCHAR(9) NOT NULL,
     "address" TEXT NOT NULL,
     "status" "FilialStatus" NOT NULL DEFAULT 'On',
+    "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "filias_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Veiculo" (
-    "id" TEXT NOT NULL,
-    "matricula" VARCHAR(8) NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Veiculo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -64,14 +56,25 @@ CREATE TABLE "auth_link_driver" (
 );
 
 -- CreateTable
+CREATE TABLE "veiculo" (
+    "id" TEXT NOT NULL,
+    "matricula" VARCHAR(11) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "veiculo_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "driver" (
     "id" TEXT NOT NULL,
+    "code" TEXT,
     "filial_id" TEXT NOT NULL,
+    "veiculo_id" TEXT NOT NULL,
     "numberBI" VARCHAR(13) NOT NULL,
-    "veicolo_id" TEXT NOT NULL,
     "name" VARCHAR(150) NOT NULL,
-    "email" TEXT,
-    "coordenadas" DOUBLE PRECISION[],
+    "email" TEXT NOT NULL,
+    "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
     "senha" TEXT NOT NULL,
     "tel" VARCHAR(9) NOT NULL,
     "nascimento" TIMESTAMP(3) NOT NULL,
@@ -80,6 +83,17 @@ CREATE TABLE "driver" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "driver_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Paiments" (
+    "id" TEXT NOT NULL,
+    "clienteId" TEXT NOT NULL,
+    "duration" INTEGER NOT NULL,
+    "end_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Paiments_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -92,7 +106,7 @@ CREATE TABLE "clientes" (
     "tel" VARCHAR(9) NOT NULL,
     "avatar" TEXT,
     "address" TEXT NOT NULL,
-    "coordenadas" DOUBLE PRECISION[],
+    "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
     "nascimento" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -108,7 +122,7 @@ CREATE TABLE "recolhas" (
     "filial_id" TEXT NOT NULL,
     "status" "Status" NOT NULL DEFAULT 'andamento',
     "comment" TEXT,
-    "rate" INTEGER NOT NULL,
+    "rate" INTEGER,
     "distance" DOUBLE PRECISION NOT NULL,
     "duration" DOUBLE PRECISION NOT NULL,
     "directions" JSONB NOT NULL,
@@ -120,6 +134,9 @@ CREATE TABLE "recolhas" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "auth_link_manager_code_key" ON "auth_link_manager"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "manager_code_key" ON "manager"("code");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "manager_email_key" ON "manager"("email");
@@ -137,16 +154,19 @@ CREATE UNIQUE INDEX "filias_tel_key" ON "filias"("tel");
 CREATE UNIQUE INDEX "filias_address_key" ON "filias"("address");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Veiculo_matricula_key" ON "Veiculo"("matricula");
-
--- CreateIndex
 CREATE UNIQUE INDEX "auth_link_driver_code_key" ON "auth_link_driver"("code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "driver_numberBI_key" ON "driver"("numberBI");
+CREATE UNIQUE INDEX "veiculo_matricula_key" ON "veiculo"("matricula");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "driver_veicolo_id_key" ON "driver"("veicolo_id");
+CREATE UNIQUE INDEX "driver_code_key" ON "driver"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "driver_veiculo_id_key" ON "driver"("veiculo_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "driver_numberBI_key" ON "driver"("numberBI");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "driver_email_key" ON "driver"("email");
@@ -167,25 +187,28 @@ CREATE UNIQUE INDEX "clientes_tel_key" ON "clientes"("tel");
 ALTER TABLE "auth_link_manager" ADD CONSTRAINT "auth_link_manager_manager_id_fkey" FOREIGN KEY ("manager_id") REFERENCES "manager"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "filias" ADD CONSTRAINT "filias_manager_id_fkey" FOREIGN KEY ("manager_id") REFERENCES "manager"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "filias" ADD CONSTRAINT "filias_manager_id_fkey" FOREIGN KEY ("manager_id") REFERENCES "manager"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "auth_link_driver" ADD CONSTRAINT "auth_link_driver_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "driver"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "driver" ADD CONSTRAINT "driver_veiculo_id_fkey" FOREIGN KEY ("veiculo_id") REFERENCES "veiculo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "driver" ADD CONSTRAINT "driver_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "driver" ADD CONSTRAINT "driver_veicolo_id_fkey" FOREIGN KEY ("veicolo_id") REFERENCES "Veiculo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Paiments" ADD CONSTRAINT "Paiments_clienteId_fkey" FOREIGN KEY ("clienteId") REFERENCES "clientes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "clientes" ADD CONSTRAINT "clientes_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "clientes" ADD CONSTRAINT "clientes_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_cliente_id_fkey" FOREIGN KEY ("cliente_id") REFERENCES "clientes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_cliente_id_fkey" FOREIGN KEY ("cliente_id") REFERENCES "clientes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_motorista_id_fkey" FOREIGN KEY ("motorista_id") REFERENCES "driver"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_motorista_id_fkey" FOREIGN KEY ("motorista_id") REFERENCES "driver"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "recolhas" ADD CONSTRAINT "recolhas_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE CASCADE ON UPDATE CASCADE;

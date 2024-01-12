@@ -6,11 +6,8 @@ import { authentication } from "./authentication";
 
 export const getMonthCanceledRecolhasAmount = new Elysia()
   .use(authentication)
-  .get("/month-canceled-recolhas-amount", async ({ getManagedFilialId }) => {
-    const filialId = env.FILIALID_BASE
-      ? env.FILIALID_BASE
-      : "clqinw2x800042sgo1q9o97pe";
-
+  .get("/month-canceled-recolhas-amount", async ({ getCurrentUser }) => {
+    // const { filialId } = await getCurrentUser()
     const today = dayjs();
     const lastMonth = today.subtract(1, "month");
     const startOfLastMonth = lastMonth.startOf("month").toDate();
@@ -19,7 +16,7 @@ export const getMonthCanceledRecolhasAmount = new Elysia()
       by: ["filialId", "status", "createdAt"],
       where: {
         AND: [
-          { filialId: filialId },
+          { filialId: env.FILIALID_BASE },
           { status: "cancelado" },
           { createdAt: { gte: startOfLastMonth } },
         ],

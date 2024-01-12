@@ -1,7 +1,15 @@
-POST http://localhost:3333/admin/authenticate 
+POST   http://localhost:3333/find-place?lat=45&lng=-110
+Content-Type: application/json
+
+### authenticate a driver
+POST   http://localhost:3333/driver/authenticate
 Content-Type: application/json
 
 {
-  "email": "divaldohelder08@gmail.com", 
-  "filial_id": "clqgttl0z000353pu7sxzl0tl"
+  "email":"anaclara51@live.com",
+  "password": "e7B9AXuGq3"
 }
+
+
+
+    

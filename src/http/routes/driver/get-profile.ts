@@ -1,21 +1,41 @@
-import { db } from '@/db/connection'
-import Elysia from 'elysia'
-import { authentication } from './authentication'
-
+import { db } from "@/db/connection";
+import Elysia from "elysia";
+import { authentication } from "./authentication";
+// Spell:ignore veicolo
 export const getProfile = new Elysia()
   .use(authentication)
-  .get('/me', async ({ getCurrentDriver }) => {
-    const { sub: sub } = await getCurrentDriver()
-
+  .get("/me", async ({ getUser }) => {
+    const { id, filialId } = await getUser();
     const driver = await db.driver.findFirst({
       where: {
-        id: sub,
+        id,
+        filialId,
       },
-    })
+      select: {
+        name: true,
+        avatar: true,
+        createdAt: true,
+        email: true,
+        nascimento: true,
+        numberBI: true,
+        tel: true,
+        filial: {
+          select: {
+            name: true,
+          },
+        },
+        veicolo: {
+          select: {
+            matricula: true,
+          },
+        },
+        _count: true,
+      },
+    });
 
     if (!driver) {
-      throw new Error('User not found.')
+      throw new Error("Motorista não encontrado.");
     }
 
-    return driver
-  })
+    return driver;
+  });

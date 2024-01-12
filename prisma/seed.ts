@@ -9,6 +9,7 @@ import chalk from "chalk";
 const Anomes = Array.from({ length: 2 }).map(() => {
   return { first: faker.person.firstName(), last: faker.person.lastName() };
 });
+
 await db.manager.createMany({
   data: [
     {
@@ -79,23 +80,13 @@ console.log(chalk.yellow("✔ filiais seeded"));
 
 // depois modificar o formato LD-83-34-CQ
 await db.veiculo.createMany({
-  data: [
-    {
-      matricula: faker.helpers.fromRegExp(
-        /LD-[^a-zA-z]{2}-[^a-zA-z]{2}-[^a-zA-z]{2}/
-      ),
-    },
-    {
-      matricula: faker.helpers.fromRegExp(
-        /LD-[^a-zA-z]{2}-[^a-zA-z]{2}-[^a-zA-z]{2}/
-      ),
-    },
-    {
-      matricula: faker.helpers.fromRegExp(
-        /LD-[^a-zA-z]{2}-[^a-zA-z]{2}-[^a-zA-z]{2}/
-      ),
-    },
-  ],
+  data: Array.from({ length: 5 }).map((e, index) => {
+    return {
+      matricula: faker.helpers
+        .fromRegExp(/LD-[0-9]{2}-[0-9]{2}-[^0-9]{2}/)
+        .toUpperCase(),
+    };
+  }),
 });
 const veicolos = await db.veiculo.findMany();
 console.log(chalk.yellow("✔ veiculo seeded"));
@@ -103,8 +94,11 @@ console.log(chalk.yellow("✔ veiculo seeded"));
 /**
  * create 3 motoristas
  */
-const Mnomes = Array.from({ length: 3 }).map(() => {
-  return { first: faker.person.firstName(), last: faker.person.lastName() };
+const Mnomes = Array.from({ length: 5 }).map(() => {
+  return {
+    first: faker.person.firstName("male"),
+    last: faker.person.lastName(),
+  };
 });
 
 await db.driver.createMany({
@@ -117,7 +111,7 @@ await db.driver.createMany({
           lastName: i.last,
         })
         .toLowerCase(),
-      coordenadas: faker.location.nearbyGPSCoordinate(),
+      veiculoId: veicolos[index].id,
       password: faker.internet.password({ length: 10 }),
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
       numberBI: faker.helpers.fromRegExp(
@@ -125,7 +119,6 @@ await db.driver.createMany({
       ),
       nascimento: faker.date.past({ years: 30 }),
       avatar: faker.image.avatar(),
-      veiculoId: veicolos[index].id,
       filialId: faker.helpers.arrayElement([
         filiais[0].id,
         filiais[1].id,

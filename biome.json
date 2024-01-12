@@ -4,16 +4,24 @@
     "enabled": true
   },
   "formatter": {
-      "arrowParentheses":"always",
-      "jsxQuoteStyle": "double",
-      "semicolons": "always",
-      "trailingComma": "all",
-      "quoteProperties": "asNeeded",
-      "bracketSpacing": true,
-      "bracketSameLine": false,  
-      "indentStyle": "space",
-      "lineWidth": 80
-    },
+    "indentStyle": "space",
+    "lineWidth": 80,
+    "enabled": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "ignore": ["./file-types/**"]
+  },
+  "overrides": [
+    {
+      "include": [".vscode"],
+      "json": {
+        "parser": {
+          "allowComments": true
+        }
+      }
+    }
+  ],
   "linter": {
     "enabled": true,
     "rules": {
@@ -21,4 +29,3 @@
     }
   }
 }
-

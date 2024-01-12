@@ -3,13 +3,19 @@ import { env } from "@/env";
 import dayjs from "dayjs";
 import Elysia from "elysia";
 import { authentication } from "./authentication";
+interface getUserProps {
+  id: string;
+  filialId: string;
+}
 
 export const getDayRecolhasAmount = new Elysia()
   .use(authentication)
-  .get("/day-recolhas-amount", async ({ getManagedFilialId }) => {
-    const filialId = env.FILIALID_BASE
-      ? env.FILIALID_BASE
-      : "clqinw2x800042sgo1q9o97pe";
+  .get("/day-recolhas-amount", async ({ set }) => {
+    // if (!filialId) {
+    //   set.status = 401;
+
+    //   throw new Error("User is not a manager.");
+    // }
 
     const today = dayjs();
     const yesterday = today.subtract(1, "day");
@@ -18,7 +24,10 @@ export const getDayRecolhasAmount = new Elysia()
     const ordersPerDay = await db.recolha.groupBy({
       by: ["filialId", "createdAt"],
       where: {
-        AND: [{ filialId: filialId }, { createdAt: { gte: startOfYesterday } }],
+        AND: [
+          { filialId: env.FILIALID_BASE },
+          { createdAt: { gte: startOfYesterday } },
+        ],
       },
       _count: {
         _all: true,

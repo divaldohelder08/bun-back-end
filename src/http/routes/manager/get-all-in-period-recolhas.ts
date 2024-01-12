@@ -2,19 +2,14 @@ import { db } from "@/db/connection";
 import { env } from "@/env";
 import dayjs from "dayjs";
 import Elysia from "elysia";
-import { authentication } from "./authentication";
 
-export const getAllReceiptInPeriod = new Elysia()
-  .use(authentication)
-  .get("/all-receipt-in-period", async ({ getManagedFilialId }) => {
-    const filialId = env.FILIALID_BASE
-      ? env.FILIALID_BASE
-      : "clqinw2x800042sgo1q9o97pe";
-
+export const getAllReceiptInPeriod = new Elysia().get(
+  "/all-receipt-in-period",
+  async () => {
     const startDate = dayjs().subtract(1, "M");
     return await db.recolha.findMany({
       where: {
-        filialId: filialId,
+        filialId: env.FILIALID_BASE,
         createdAt: {
           gte: startDate.startOf("day").toDate(),
         },
@@ -27,6 +22,7 @@ export const getAllReceiptInPeriod = new Elysia()
             name: true,
             email: true,
             avatar: true,
+            createdAt:true
           },
         },
         driver: {
@@ -35,11 +31,14 @@ export const getAllReceiptInPeriod = new Elysia()
             name: true,
             email: true,
             avatar: true,
+            createdAt:true
+            
           },
         },
         status: true,
         rate: true,
         createdAt: true,
-      }
+      },
     });
-  });
+  }
+);

@@ -33,4 +33,4 @@ export const getEvaluations = new Elysia().use(authentication).get(
       pageIndex: t.Numeric({ minimum: 0 }),
     }),
   },
-)
+) 
