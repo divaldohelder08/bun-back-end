@@ -5,10 +5,8 @@ import { deleteClient } from "./delete-client";
 import { getAllClients } from "./get-all-clients";
 import { getAllDrivers } from "./get-all-drivers";
 import { getAllReceiptInPeriod } from "./get-all-in-period-recolhas";
-import { getDailyReceiptInPeriod } from "./get-daily-receipt-in-period";
-import { getDayRecolhasAmount } from "./get-day-recolhas-amount";
-import { getMonthCanceledRecolhasAmount } from "./get-month-canceled-recolhas-amount";
-import { getMonthRecolhasAmount } from "./get-month-recolhas-amount";
+import { indexMetrics } from "./metrics/_index-metrics";
+import { indexRegister } from "./register/_index-register";
 
 export const indexManager = new Elysia()
   .use(authenticate) // /manager/authenticate => Post
@@ -17,10 +15,5 @@ export const indexManager = new Elysia()
   .use(getAllDrivers) // /manager/get-all-drivers => get
   .use(getAllClients) // /manager/get-all-clients => get
   .use(deleteClient)
-  .group("/metrics", (app) => {
-    return app
-      .use(getMonthCanceledRecolhasAmount) // /manager/metrics/month-canceled-recolhas-amount => get
-      .use(getDayRecolhasAmount) // /manager/metrics/day-recolhas-amount => get
-      .use(getDailyReceiptInPeriod) // /manager/metrics/daily-receipt-in-period => get
-      .use(getMonthRecolhasAmount); // /manager/metrics/month-recolhas-amount => get
-  });
+  .group("/metrics", (app) => app.use(indexMetrics))
+  .group("/register", (app) => app.use(indexRegister));

@@ -1,9 +1,8 @@
 import { db } from "@/db/connection";
 import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
-import { authentication } from "./authentication";
 
-export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
+export const getDailyReceiptInPeriod = new Elysia().get(
   "/daily-receipt-in-period",
   async ({ query, set }) => {
     const { from, to } = query;
@@ -61,5 +60,5 @@ export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
       from: t.Optional(t.String()),
       to: t.Optional(t.String()),
     }),
-  }
+  },
 );

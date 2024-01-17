@@ -4,6 +4,7 @@ const envSchema = z.object({
   API_BASE_URL: z.string().url(),
   FRONT_BASE_URL: z.string().url(),
   AUTH_REDIRECT_URL_MANAGER: z.string().url(),
+  AUTH_REDIRECT_URL_SUPERMANAGER: z.string().url(),
   AUTH_REDIRECT_URL_DRIVER: z.string().url(),
   DATABASE_URL: z.string().url().min(1),
   JWT_SECRET_KEY: z.string().min(1),

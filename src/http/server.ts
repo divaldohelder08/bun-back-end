@@ -4,7 +4,7 @@ import { Elysia } from "elysia";
 import { indexCooperativa } from "./routes/cooperativa/_index-cooperativa";
 import { indexDriver } from "./routes/driver/_index-driver";
 import { indexManager } from "./routes/manager/_index-manager";
-import {PlacesService} from "./routes/maps/places/places"
+import { PlacesService } from "./routes/maps/places/places";
 const app = new Elysia()
   .use(
     cors({
@@ -20,12 +20,19 @@ const app = new Elysia()
 
         return true;
       },
-    })
+    }),
   )
   .group("/find", (app) => {
-    return app.get("/filiais", () =>
-      db.filial.findMany({ select: { id: true, name: true } })
-    );
+    return app
+      .get("/filiais", () =>
+        db.filial.findMany({ select: { id: true, name: true } }),
+      )
+      .get("/drivers", async () => {
+        return await db.driver.findMany();
+      })
+      .get("/managers", async () => {
+        return await db.manager.findMany();
+      });
   })
   .use(PlacesService)
   .group("/driver", (app) => app.use(indexDriver))
@@ -33,7 +40,6 @@ const app = new Elysia()
   .group("/cooperativa", (app) => app.use(indexCooperativa));
 
 app.listen(3333);
-0
 console.log(
-  `🔥 HTTP server running at http://${app.server?.hostname}:${app.server?.port}`
+  `🔥 HTTP server running at http://${app.server?.hostname}:${app.server?.port}`,
 );

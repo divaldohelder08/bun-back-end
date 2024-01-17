@@ -1,4 +1,3 @@
-import { db } from "@/db/connection";
 import Elysia from "elysia";
 import { authenticate } from "./authenticate";
 import { authenticateFromLink } from "./authenticate-from-link";
@@ -15,7 +14,4 @@ export const indexDriver = new Elysia()
   .use(validateEmail) //  /driver/validate-email => put
   .use(validateCode) // /driver/validate-code/:id => post
   .use(changePassword) // /driver/change-password => post
-  .use(getAllRecolha) ///driver/get-all-recolha/id get just to test
-  .get("/ola", async () => {
-    return await db.driver.findMany();
-  });
+  .use(getAllRecolha); ///driver/get-all-recolha/id get just to test

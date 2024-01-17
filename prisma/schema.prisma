@@ -18,21 +18,25 @@ generator erd {
 }
 
 enum Status {
-  pendente // pendente
-  andamento //andamento
-  cancelado //cancelado
-  finalizada //finalizada
+  pendente // pendente=> recolha atribuida para um mado motorista
+  andamento //andamento => recolha a ser realizada no exacto momento pelo motorista
+  cancelada //cancelada => recolha cancelada por algum motivo
+  finalizada //finalizada => recolha finalizada
 }
 
 enum FilialStatus {
-  On
-  Chuva
-  Noite
+  On // Quando a tal filial esta On 
+  Chuva // Quando estiver a chover na area da tal filial => ñ trabalhamos
+  Noite // Quando for de noite => ñ trabalhamos
 }
 
 enum RoleEnum {
-  superGerente
-  gerente
+  superGerente // gerentes que teram acesso ao dashboard principal ["divaldo","fernando","edivaldo"]
+  gerente // gerente de uma dada filial
+}
+enum PaimentsStatus {
+  Espired //pagamento espirado
+  Paided //pagamento feito
 }
 
 model authLinksManager {
@@ -46,6 +50,19 @@ model authLinksManager {
 
   @@map("auth_link_manager")
 }
+
+model authLinksDriver {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  driverId  String   @map("driver_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  //relações
+  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@map("auth_link_driver")
+}
+
 
 model Manager {
   id        String   @id @default(uuid())
@@ -67,7 +84,7 @@ model Filial {
   id          String       @id @default(uuid())
   managerId   String       @unique @map("manager_id")
   name        String       @unique @db.VarChar(100)
-  tel         String       @unique @db.VarChar(9)
+  tel         String       @unique @db.VarChar(12) @map("telefone")
   address     String       @unique // enderço da filial da empresa
   status      FilialStatus @default(On) //status da filial
   coordenadas Float[]      @default([0, 0]) @db.DoublePrecision()
@@ -83,17 +100,6 @@ model Filial {
   @@map("filias")
 }
 
-model authLinksDriver {
-  id        String   @id @default(uuid())
-  code      String   @unique
-  driverId  String   @map("driver_id")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  //relações
-  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
-
-  @@map("auth_link_driver")
-}
 
 model Veiculo {
   id        String   @id @default(uuid())
@@ -116,7 +122,7 @@ model Driver {
   coordenadas Float[]  @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
   // location   Unsupported("geography(Point, 4326)")
   password    String   @map("senha")
-  tel         String   @unique @db.VarChar(9)
+  tel         String   @unique @db.VarChar(12)  @map("telefone")
   nascimento  DateTime
   avatar      String?
   createdAt   DateTime @default(now()) @map("created_at")
@@ -130,11 +136,12 @@ model Driver {
   @@map("driver")
 }
 
+
 model Paiments {
   id        String   @id @default(uuid())
-  clienteId String
-  duration  Int
-  endAt     DateTime @map("end_at")
+  clienteId String @map("cliente_id") @unique
+  duration  Int //duração do tal pagamento em meses => ou seja pagou 2M 
+  endAt     DateTime @map("end_at") //data que o tal pagamento termina
   createdAt DateTime @default(now()) @map("created_at")
   cliente   Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
 }
@@ -145,11 +152,11 @@ model Cliente {
   name        String   @db.VarChar(250)
   email       String   @unique
   numberBI    String   @unique @map("number_bi") @db.VarChar(13)
-  tel         String   @unique @db.VarChar(9)
+  tel         String   @unique @db.VarChar(12)
   avatar      String?
   address     String //enderço da casa do cliente
   coordenadas Float[]  @default([0, 0]) @db.DoublePrecision()
-  // location   Unsupported("geography(Point, 4326)")
+  status    PaimentsStatus   @default(Paided)
   nascimento  DateTime
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -167,7 +174,7 @@ model Recolha {
   clienteId  String   @map("cliente_id") // ñ esquecer de tirar o destino da recolha na lat e lgn do cliente
   driverId   String   @map("motorista_id")
   filialId   String   @map("filial_id")
-  status     Status   @default(andamento)
+  status     Status   @default(pendente)
   comment    String?  @db.Text
   rate       Int?
   distance   Float

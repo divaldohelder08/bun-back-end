@@ -10,7 +10,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["./file-types/**"]
+    "ignore": ["./file-types/**", "src/http/routes/maps/**","node_modules/**"]
   },
   "overrides": [
     {

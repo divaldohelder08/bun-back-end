@@ -1,11 +1,18 @@
 import { db } from "@/db/connection";
-import { env } from "@/env";
 import Elysia from "elysia";
 //Spell:ignore FILIALID_BASE
 export const getAllDrivers = new Elysia().get("/get-all-drivers", async () => {
+  const camamaFilial = await db.filial.findFirst({
+    where: {
+      name: {
+        contains: "Camama",
+      },
+    },
+  });
+
   return await db.driver.findMany({
     where: {
-      filialId: env.FILIALID_BASE,
+      filialId: camamaFilial?.id,
     },
     select: {
       id: true,
@@ -14,7 +21,7 @@ export const getAllDrivers = new Elysia().get("/get-all-drivers", async () => {
       email: true,
       nascimento: true,
       createdAt: true,
-      Veiculo: {
+      veiculo: {
         select: {
           matricula: true,
         },

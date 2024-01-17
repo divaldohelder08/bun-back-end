@@ -20,7 +20,7 @@ export const getAllReceiptInPeriod = new Elysia().get(
             name: true,
             email: true,
             avatar: true,
-            createdAt:true,
+            createdAt: true,
           },
         },
         driver: {
@@ -29,9 +29,8 @@ export const getAllReceiptInPeriod = new Elysia().get(
             name: true,
             email: true,
             avatar: true,
-            filialId:true,
-            createdAt:true,
-            
+            filialId: true,
+            createdAt: true,
           },
         },
         status: true,
@@ -39,5 +38,5 @@ export const getAllReceiptInPeriod = new Elysia().get(
         createdAt: true,
       },
     });
-  }
+  },
 );

@@ -44,13 +44,12 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
         code,
       },
     });
-//    set.redirect = redirect;
-    return "oi"
+    set.redirect = redirect;
   },
   {
     query: t.Object({
       code: t.String(),
       redirect: t.String(),
     }),
-  }
+  },
 );

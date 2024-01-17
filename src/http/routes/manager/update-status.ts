@@ -2,7 +2,7 @@ import { db } from "@/db/connection";
 import { env } from "@/env";
 import Elysia, { t } from "elysia";
 import { authentication } from "./authentication";
-type Statusvalue= "On" | "Chuva" | "Noite";
+type Statusvalue = "On" | "Chuva" | "Noite";
 // Spell:ignore Statusvalue
 
 export const updateProfile = new Elysia().use(authentication).put(

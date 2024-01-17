@@ -29,7 +29,7 @@ export const authentication = new Elysia()
       name: "jwt",
       secret: env.JWT_SECRET_KEY,
       schema: jwtPayloadSchema,
-    })
+    }),
   )
   .use(cookie())
   .derive(({ jwt, setCookie, removeCookie, cookie: { auth } }) => {
@@ -38,7 +38,7 @@ export const authentication = new Elysia()
         const payload = await jwt.verify(auth);
 
         if (!payload) {
-        console.log('caralho')
+          console.log("caralho");
           throw new UnauthorizedError();
         }
 
@@ -48,8 +48,7 @@ export const authentication = new Elysia()
         setCookie("auth", await jwt.sign(payload), {
           httpOnly: true,
           maxAge: 7 * 86400,
-          path: '/',
-          
+          path: "/",
         });
       },
 

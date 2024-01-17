@@ -51,5 +51,5 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
       code: t.String(),
       redirect: t.String(),
     }),
-  }
+  },
 );

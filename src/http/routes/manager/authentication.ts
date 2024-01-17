@@ -29,7 +29,7 @@ export const authentication = new Elysia()
       name: "jwt",
       secret: env.JWT_SECRET_KEY,
       schema: jwtPayloadSchema,
-    })
+    }),
   )
   .use(cookie())
   .derive(({ jwt, cookie, setCookie, removeCookie }) => {

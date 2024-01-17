@@ -1,6 +1,5 @@
 import { db } from "@/db/connection";
 import Elysia from "elysia";
-//Spell:ignore FILIALID_BASE
 export const getAllDrivers = new Elysia().get("/get-all-drivers", async () => {
   return await db.driver.findMany({
     select: {
@@ -15,7 +14,7 @@ export const getAllDrivers = new Elysia().get("/get-all-drivers", async () => {
           id: true,
         },
       },
-      Veiculo: {
+      veiculo: {
         select: {
           matricula: true,
         },

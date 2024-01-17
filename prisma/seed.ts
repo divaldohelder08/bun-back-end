@@ -186,7 +186,7 @@ await db.recolha.createMany({
       status: faker.helpers.arrayElement([
         "pendente",
         "andamento",
-        "cancelado",
+        "cancelada",
         "finalizada",
       ]),
       comment: faker.lorem.paragraph({ max: 1, min: 1 }),

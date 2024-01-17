@@ -10,11 +10,11 @@ export const getAllClients = new Elysia().get("/get-all-clients", async () => {
       numberBI: true,
       nascimento: true,
       createdAt: true,
-      filial:{
-        select:{
-            id:true
-        }
-      }
+      filial: {
+        select: {
+          id: true,
+        },
+      },
     },
   });
 });

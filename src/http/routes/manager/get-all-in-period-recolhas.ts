@@ -1,5 +1,4 @@
 import { db } from "@/db/connection";
-import { env } from "@/env";
 import dayjs from "dayjs";
 import Elysia from "elysia";
 
@@ -7,9 +6,17 @@ export const getAllReceiptInPeriod = new Elysia().get(
   "/all-receipt-in-period",
   async () => {
     const startDate = dayjs().subtract(1, "M");
+    const camamaFilial = await db.filial.findFirst({
+      where: {
+        name: {
+          contains: "Camama",
+        },
+      },
+    });
+
     return await db.recolha.findMany({
       where: {
-        filialId: env.FILIALID_BASE,
+        filialId: camamaFilial?.id,
         createdAt: {
           gte: startDate.startOf("day").toDate(),
         },
@@ -22,7 +29,7 @@ export const getAllReceiptInPeriod = new Elysia().get(
             name: true,
             email: true,
             avatar: true,
-            createdAt:true
+            createdAt: true,
           },
         },
         driver: {
@@ -31,8 +38,7 @@ export const getAllReceiptInPeriod = new Elysia().get(
             name: true,
             email: true,
             avatar: true,
-            createdAt:true
-            
+            createdAt: true,
           },
         },
         status: true,
@@ -40,5 +46,5 @@ export const getAllReceiptInPeriod = new Elysia().get(
         createdAt: true,
       },
     });
-  }
+  },
 );

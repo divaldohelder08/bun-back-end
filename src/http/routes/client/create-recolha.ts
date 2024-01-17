@@ -1,10 +1,10 @@
 import { Client as Gg } from "@googlemaps/google-maps-services-js";
 
 export const MapsModule = {
-  provide: 'MapsService',
+  provide: "MapsService",
   useFactory: () => {
     return new Gg({});
-  }
+  },
 };
 
 import { Client as GoogleMapsClient } from "@googlemaps/google-maps-services-js";

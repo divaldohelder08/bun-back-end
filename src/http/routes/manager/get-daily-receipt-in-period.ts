@@ -1,5 +1,4 @@
 import { db } from "@/db/connection";
-import { env } from "@/env";
 import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
 import { authentication } from "./authentication";
@@ -20,11 +19,18 @@ export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
         message: "O intervalo das datas não pode ser superior a 7 dias.",
       };
     }
+    const camamaFilial = await db.filial.findFirst({
+      where: {
+        name: {
+          contains: "Camama",
+        },
+      },
+    });
 
     const receiptPerDay = await db.recolha.groupBy({
       by: ["createdAt"],
       where: {
-        filialId: env.FILIALID_BASE,
+        filialId: camamaFilial?.id,
         createdAt: {
           gte: startDate.startOf("day").toDate(),
           lte: endDate.endOf("day").toDate(),
@@ -63,5 +69,5 @@ export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
       from: t.Optional(t.String()),
       to: t.Optional(t.String()),
     }),
-  }
+  },
 );

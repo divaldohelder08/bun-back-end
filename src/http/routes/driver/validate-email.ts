@@ -48,5 +48,5 @@ export const validateEmail = new Elysia().put(
     body: t.Object({
       email: t.String({ format: "email" }),
     }),
-  }
+  },
 );

@@ -21,5 +21,5 @@ export const changePassword = new Elysia().post(
       senha: t.String(),
       id: t.String(),
     }),
-  }
+  },
 );

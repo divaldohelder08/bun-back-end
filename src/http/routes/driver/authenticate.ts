@@ -31,7 +31,7 @@ export const authenticate = new Elysia().post(
 
     const authLink = new URL(
       "/driver/auth-links/authenticate",
-      env.API_BASE_URL
+      env.API_BASE_URL,
     );
     authLink.searchParams.set("code", authLinkCode);
     authLink.searchParams.set("redirect", env.AUTH_REDIRECT_URL_DRIVER);
@@ -58,5 +58,5 @@ export const authenticate = new Elysia().post(
       email: t.String({ format: "email" }),
       password: t.String(),
     }),
-  }
+  },
 );

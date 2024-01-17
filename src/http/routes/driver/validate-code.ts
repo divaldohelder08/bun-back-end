@@ -31,5 +31,5 @@ export const validateCode = new Elysia().post(
     body: t.Object({
       code: t.String(),
     }),
-  }
+  },
 );

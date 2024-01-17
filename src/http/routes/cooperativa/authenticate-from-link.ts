@@ -1,22 +1,20 @@
 import { db } from "@/db/connection";
-import chalk from "chalk";
 import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
 import { UnauthorizedError } from "../Errors";
-import { authentication } from "./authentication";
+import { authentication } from "../manager/authentication";
 
 export const authenticateFromLink = new Elysia().use(authentication).get(
   "/auth-links/authenticate",
   async ({ query, set, signUser }) => {
     const { code, redirect } = query;
-    const authLinkFromCode = await db.authLinksManager.findFirst({
+    const authLinkFromCode = await db.authLinksManager.findFirstOrThrow({
       where: {
         code,
       },
     });
 
     if (!authLinkFromCode) {
-      console.log(chalk.yellowBright("UnauthorizedError"));
       throw new UnauthorizedError();
     }
     if (dayjs().diff(authLinkFromCode.createdAt, "minute") > 5) {
@@ -28,16 +26,14 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
       throw new UnauthorizedError();
     }
 
-    const managedFilial = await db.filial.findFirst({
-      where: {
-        managerId: authLinkFromCode.managerId,
-      },
-    });
-
-    await signUser({
-      id: authLinkFromCode.managerId,
-      filialId: managedFilial?.id,
-    });
+    //cadastrar o cookie do jwt
+    //   setCookie("auth", await jwt.sign({id: authLinkFromCode.managerId,
+    //     role: "superGerente"}), {
+    //     httpOnly: true,
+    //     maxAge: 7 * 86400,
+    //     path: "/",
+    //   });
+    // },
 
     await db.authLinksManager.delete({
       where: {
@@ -51,5 +47,5 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
       code: t.String(),
       redirect: t.String(),
     }),
-  }
+  },
 );

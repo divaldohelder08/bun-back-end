@@ -1,4 +1,4 @@
-import { env } from '@/env'
+import { env } from "@/env";
 import {
   Body,
   Button,
@@ -11,11 +11,12 @@ import {
   Section,
   Tailwind,
   Text,
-} from '@react-email/components'
+} from "@react-email/components";
+
 interface MagicLinkAuthTemplateProps {
-  userEmail: string
-  authLink: string
-  username: string
+  userEmail: string;
+  authLink: string;
+  username: string;
 }
 
 export function MagicLinkAuthTemplate({
@@ -57,7 +58,7 @@ export function MagicLinkAuthTemplate({
                 Entrar agora
               </Button>
               <Text className="text-black text-[14px] leading-[24px]">
-                ou copie a URL abaixo e cole em seu browser:{' '}
+                ou copie a URL abaixo e cole em seu browser:{" "}
                 <Link href={authLink} className="text-sky-500 no-underline">
                   {authLink}
                 </Link>
@@ -76,5 +77,5 @@ export function MagicLinkAuthTemplate({
         </Body>
       </Tailwind>
     </Html>
-  )
+  );
 }

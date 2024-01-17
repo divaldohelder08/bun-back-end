@@ -1,9 +1,10 @@
 import { db } from "@/db/connection";
+import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
 
 export const getDriverById = new Elysia().get(
   "/get-driver-by-id/:id",
-  async ({ params, set }) => {
+  async ({ params }) => {
     const { id } = params;
 
     const driver = await db.driver.findFirst({
@@ -31,40 +32,43 @@ export const getDriverById = new Elysia().get(
     if (!driver) {
       throw new Error("Motorista ñ encontrado");
     }
-
+    const rowValue = await db.recolha.groupBy({
+      by: ["status"],
+      where: {
+        driverId: id,
+        status: {
+          in: ["finalizada", "cancelada"],
+        },
+      },
+      _count: true,
+    });
+    const heatData = await db.recolha.groupBy({
+      by: ["createdAt"],
+      where: {
+        driverId: id,
+      },
+      _count: true,
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
     return {
       driver,
-      HeatMap: await db.recolha.groupBy({
-        by: ["createdAt"],
-        where: {
-          driverId: id,
-        },
-        _count: true,
-        orderBy: {
-          createdAt: "asc",
-        },
+      heatMap: heatData.map((e) => {
+        return {
+          date: dayjs(e.createdAt).format("YYYY/MM/DD"),
+          count: e._count,
+        };
       }),
-      row: await db.recolha.groupBy({
-        by: ["status"],
-        where: {
-          driverId: id,
-          status: {
-            in: ["cancelado", "finalizada"],
-          },
-        },
-        _count: true,
-      }),
+      row: {
+        finalizada: rowValue[0] ? rowValue[0]._count : 0,
+        cancelada: rowValue[1] ? rowValue[1]._count : 0,
+      },
     };
-
-    // await db.recolha.findMany({
-    //   where:{
-    //     driverId:id
-    //   },
-    //})
   },
   {
     params: t.Object({
       id: t.String(),
     }),
-  }
+  },
 );

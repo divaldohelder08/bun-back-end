@@ -1,33 +1,24 @@
 import { db } from "@/db/connection";
 import Elysia from "elysia";
-import { authentication } from "./authentication";
 
-export const getAllRecolha = new Elysia()
-  .use(authentication)
-  .get("/get-all-recolha", async ({ getCurrentUser }) => {
-    const { sub } = await getCurrentUser();
-    console.log(sub)
-    return await db.recolha.findMany({
-      where: {
-        driverId: sub,
-        status: "pendente",
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-      select: {
-        id: true,
-        createdAt: true,
-        cliente: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-            email: true,
-            tel: true,
-          },
+export const getAllRecolha = new Elysia().get(
+  "/get-all-recolha",
+  async ({ getCurrentUser }) => {
+    return {
+      recos: await db.recolha.findMany({
+        where: {
+          driverId: "fb069db7-d8b6-4f0f-888c-65bf4ce4a0b4",
+          status: "pendente",
         },
-      },
-      take: 10,
-    });
-  });
+        orderBy: {
+          createdAt: "asc",
+        },
+        select: {
+          id: true,
+          createdAt: true,
+        },
+        take: 10,
+      }),
+    };
+  },
+);

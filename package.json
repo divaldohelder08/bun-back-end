@@ -6,9 +6,8 @@
   "scripts": {
     "dev": "bun --watch src/http/server.ts",
     "migrate": "bun prisma migrate dev",
-    "migSeed": "bun prisma migrate dev --name init",
     "seed": "bun prisma/seed.ts",
-    "biome:check": "biome check teste.ts"
+    "biome:check": "biome check src"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
@@ -21,13 +20,15 @@
     "@elysiajs/jwt": "^0.7.0",
     "@googlemaps/google-maps-services-js": "^3.3.42",
     "@paralleldrive/cuid2": "2.2.2",
-    "@prisma/client": "^5.7.1",
+    "@prisma/client": "latest",
     "@react-email/components": "^0.0.11",
+    "@types/nodemailer": "^6.4.14",
     "axios": "^1.6.5",
     "dayjs": "^1.11.10",
     "elysia": "0.7.29",
+    "nodemailer": "^6.9.8",
     "postgres": "3.4.3",
-    "prisma": "^5.7.1",
+    "prisma": "latest",
     "react": "^18.2.0",
     "resend": "^2.0.0",
     "zod": "3.22.4"
