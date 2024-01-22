@@ -34,9 +34,10 @@ enum RoleEnum {
   superGerente // gerentes que teram acesso ao dashboard principal ["divaldo","fernando","edivaldo"]
   gerente // gerente de uma dada filial
 }
-enum PaimentsStatus {
-  Espired //pagamento espirado
-  Paided //pagamento feito
+
+enum PaymentStatus {
+  expirado //pagamento espirado
+  pago //pagamento feito
 }
 
 model authLinksManager {
@@ -63,7 +64,6 @@ model authLinksDriver {
   @@map("auth_link_driver")
 }
 
-
 model Manager {
   id        String   @id @default(uuid())
   code      String?  @unique
@@ -84,7 +84,7 @@ model Filial {
   id          String       @id @default(uuid())
   managerId   String       @unique @map("manager_id")
   name        String       @unique @db.VarChar(100)
-  tel         String       @unique @db.VarChar(12) @map("telefone")
+  tel         String       @unique @map("telefone") @db.VarChar(12)
   address     String       @unique // enderço da filial da empresa
   status      FilialStatus @default(On) //status da filial
   coordenadas Float[]      @default([0, 0]) @db.DoublePrecision()
@@ -99,7 +99,6 @@ model Filial {
 
   @@map("filias")
 }
-
 
 model Veiculo {
   id        String   @id @default(uuid())
@@ -122,7 +121,7 @@ model Driver {
   coordenadas Float[]  @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
   // location   Unsupported("geography(Point, 4326)")
   password    String   @map("senha")
-  tel         String   @unique @db.VarChar(12)  @map("telefone")
+  tel         String   @unique @map("telefone") @db.VarChar(12)
   nascimento  DateTime
   avatar      String?
   createdAt   DateTime @default(now()) @map("created_at")
@@ -136,35 +135,35 @@ model Driver {
   @@map("driver")
 }
 
+model Payment {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  endAt     DateTime  @map("end_at") //data que o tal pagamento termina
+  Cliente   Cliente[]
 
-model Paiments {
-  id        String   @id @default(uuid())
-  clienteId String @map("cliente_id") @unique
-  duration  Int //duração do tal pagamento em meses => ou seja pagou 2M 
-  endAt     DateTime @map("end_at") //data que o tal pagamento termina
-  createdAt DateTime @default(now()) @map("created_at")
-  cliente   Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  @@map("pagamentos")
 }
 
 model Cliente {
-  id          String   @id @default(uuid())
-  filialId    String   @map("filial_id")
-  name        String   @db.VarChar(250)
-  email       String   @unique
-  numberBI    String   @unique @map("number_bi") @db.VarChar(13)
-  tel         String   @unique @db.VarChar(12)
+  id          String        @id @default(uuid())
+  filialId    String        @map("filial_id")
+  paymentId   String        @map("payment_id")
+  name        String        @db.VarChar(250)
+  email       String        @unique
+  numberBI    String        @unique @map("number_bi") @db.VarChar(13)
+  tel         String        @unique @db.VarChar(12)
   avatar      String?
   address     String //enderço da casa do cliente
-  coordenadas Float[]  @default([0, 0]) @db.DoublePrecision()
-  status    PaimentsStatus   @default(Paided)
+  coordenadas Float[]       @default([0, 0]) @db.DoublePrecision()
+  status      PaymentStatus @default(pago)
   nascimento  DateTime
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
 
   //relações
   recolhas Recolha[]
-  filial   Filial     @relation(fields: [filialId], references: [id], onDelete: Cascade)
-  Paiments Paiments[]
+  payment  Payment   @relation(fields: [paymentId], references: [id])
+  filial   Filial    @relation(fields: [filialId], references: [id], onDelete: Cascade)
 
   @@map("clientes")
 }

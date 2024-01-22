@@ -6,6 +6,8 @@ import { getAllClients } from "./get-all-clients";
 import { getAllDrivers } from "./get-all-drivers";
 import { getAllFilial } from "./get-all-filial";
 import { getAllReceiptInPeriod } from "./get-all-in-period-recolhas";
+import { getClientById } from "./get-client-by-id";
+import { getDeleteClientById } from "./get-delete-client";
 import { getDriverById } from "./get-driver-by-id";
 import { indexMetrics } from "./metrics/_index-metrics";
 
@@ -18,5 +20,7 @@ export const indexCooperativa = new Elysia()
   .use(deleteClient)
   .use(getAllFilial) // /cooperativa/get-all-filial
   .use(getDriverById) // /cooperativa/get-driver-by-id
+  .use(getClientById) // /cooperativa/get-client-by-id
+  .use(getDeleteClientById)
 
   .group("/metrics", (app) => app.use(indexMetrics));

@@ -10,11 +10,17 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["./file-types/**", "src/http/routes/maps/**","node_modules/**"]
+    "ignore": [
+      "./file-types/**",
+      "src/http/routes/maps/**",
+      "node_modules/**"
+    ]
   },
   "overrides": [
     {
-      "include": [".vscode"],
+      "include": [
+        ".vscode"
+      ],
       "json": {
         "parser": {
           "allowComments": true

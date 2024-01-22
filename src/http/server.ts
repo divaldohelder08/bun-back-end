@@ -4,7 +4,7 @@ import { Elysia } from "elysia";
 import { indexCooperativa } from "./routes/cooperativa/_index-cooperativa";
 import { indexDriver } from "./routes/driver/_index-driver";
 import { indexManager } from "./routes/manager/_index-manager";
-import { PlacesService } from "./routes/maps/places/places";
+import { GetRecolhaById } from "./routes/mult/get-recolha-by-id";
 const app = new Elysia()
   .use(
     cors({
@@ -20,26 +20,32 @@ const app = new Elysia()
 
         return true;
       },
-    }),
+    })
   )
+  .use(GetRecolhaById)
   .group("/find", (app) => {
     return app
       .get("/filiais", () =>
-        db.filial.findMany({ select: { id: true, name: true } }),
+        db.filial.findMany({ select: { id: true, name: true } })
       )
       .get("/drivers", async () => {
         return await db.driver.findMany();
       })
+      .get("/clients", async () => {
+        return await db.cliente.findMany();
+      })
       .get("/managers", async () => {
         return await db.manager.findMany();
+      })
+      .get("/recolha", async () => {
+        return await db.recolha.findMany();
       });
   })
-  .use(PlacesService)
   .group("/driver", (app) => app.use(indexDriver))
   .group("/manager", (app) => app.use(indexManager))
   .group("/cooperativa", (app) => app.use(indexCooperativa));
 
 app.listen(3333);
 console.log(
-  `🔥 HTTP server running at http://${app.server?.hostname}:${app.server?.port}`,
+  `🔥 HTTP server running at http://${app.server?.hostname}:${app.server?.port}`
 );

@@ -8,7 +8,7 @@ CREATE TYPE "FilialStatus" AS ENUM ('On', 'Chuva', 'Noite');
 CREATE TYPE "RoleEnum" AS ENUM ('superGerente', 'gerente');
 
 -- CreateEnum
-CREATE TYPE "PaimentsStatus" AS ENUM ('Espired', 'Paided');
+CREATE TYPE "PaymentStatus" AS ENUM ('expirado', 'pago');
 
 -- CreateTable
 CREATE TABLE "auth_link_manager" (
@@ -89,20 +89,19 @@ CREATE TABLE "driver" (
 );
 
 -- CreateTable
-CREATE TABLE "Paiments" (
+CREATE TABLE "pagamentos" (
     "id" TEXT NOT NULL,
-    "cliente_id" TEXT NOT NULL,
-    "duration" INTEGER NOT NULL,
-    "end_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "end_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Paiments_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pagamentos_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "clientes" (
     "id" TEXT NOT NULL,
     "filial_id" TEXT NOT NULL,
+    "payment_id" TEXT NOT NULL,
     "name" VARCHAR(250) NOT NULL,
     "email" TEXT NOT NULL,
     "number_bi" VARCHAR(13) NOT NULL,
@@ -110,7 +109,7 @@ CREATE TABLE "clientes" (
     "avatar" TEXT,
     "address" TEXT NOT NULL,
     "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
-    "status" "PaimentsStatus" NOT NULL DEFAULT 'Paided',
+    "status" "PaymentStatus" NOT NULL DEFAULT 'pago',
     "nascimento" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -179,9 +178,6 @@ CREATE UNIQUE INDEX "driver_email_key" ON "driver"("email");
 CREATE UNIQUE INDEX "driver_telefone_key" ON "driver"("telefone");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Paiments_cliente_id_key" ON "Paiments"("cliente_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "clientes_email_key" ON "clientes"("email");
 
 -- CreateIndex
@@ -206,7 +202,7 @@ ALTER TABLE "driver" ADD CONSTRAINT "driver_veiculo_id_fkey" FOREIGN KEY ("veicu
 ALTER TABLE "driver" ADD CONSTRAINT "driver_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Paiments" ADD CONSTRAINT "Paiments_cliente_id_fkey" FOREIGN KEY ("cliente_id") REFERENCES "clientes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "clientes" ADD CONSTRAINT "clientes_payment_id_fkey" FOREIGN KEY ("payment_id") REFERENCES "pagamentos"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "clientes" ADD CONSTRAINT "clientes_filial_id_fkey" FOREIGN KEY ("filial_id") REFERENCES "filias"("id") ON DELETE CASCADE ON UPDATE CASCADE;

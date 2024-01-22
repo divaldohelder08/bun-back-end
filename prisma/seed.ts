@@ -1,7 +1,10 @@
 import { db } from "@/db/connection";
 import { fakerPT_BR as faker } from "@faker-js/faker";
 import chalk from "chalk";
+import dayjs from "dayjs";
 // Cspell:ignore Camama Talatona alice veicolos Mnomes Cnomes directions Anomes Mdata
+
+const today = dayjs();
 
 /**
  * create 3 adm
@@ -138,8 +141,18 @@ const Cnomes = Array.from({ length: 6 }).map(() => {
   return { first: faker.person.firstName(), last: faker.person.lastName() };
 });
 
+await db.payment.createMany({
+  data: Array.from({ length: 6 }).map(() => {
+    return {
+      endAt: today.add(1, "day").startOf("day").toDate(),
+    };
+  }),
+});
+
+const payments = await db.payment.findMany();
+
 await db.cliente.createMany({
-  data: Cnomes.map((i) => {
+  data: Cnomes.map((i, index) => {
     return {
       name: `${i.first} ${i.last}`,
       email: faker.internet
@@ -155,6 +168,8 @@ await db.cliente.createMany({
       ),
       nascimento: faker.date.past({ years: 30 }),
       avatar: faker.image.avatar(),
+      paymentId: payments[index].id,
+      status: "pago",
       filialId: faker.helpers.arrayElement([
         filiais[0].id,
         filiais[1].id,

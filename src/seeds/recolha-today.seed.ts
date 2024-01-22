@@ -1,18 +1,13 @@
 import { db } from "@/db/connection";
 import { fakerPT_BR as faker } from "@faker-js/faker";
 import chalk from "chalk";
-// Cspell:ignore Camama Talatona alice veicolos Mnomes Cnomes directions Anomes Mdata
-
-/**
- * create 3 adm
- */
-
 async function main() {
   const filiais = await db.filial.findMany();
   const motoristas = await db.driver.findMany();
   const clientes = await db.cliente.findMany();
+
   await db.recolha.createMany({
-    data: Array.from({ length: 1 }).map((e, index) => {
+    data: Array.from({ length: 5 }).map(() => {
       return {
         clienteId: faker.helpers.arrayElement(
           Array.from({ length: 4 }).map((_, i) => clientes[i].id)
@@ -39,6 +34,4 @@ async function main() {
   });
 }
 
-setInterval(main, Math.round(Math.random() * 4000));
 console.log(chalk.yellow("✔ recolhas seeded"));
-console.log(chalk.greenBright("Database seeded successfully!"));
