@@ -1,4 +1,3 @@
-import { db } from "@/db/connection";
-
-const payments = await db.payment.findMany();
-console.log(payments);
+const b=57
+console.log(b.toLocaleString("pt", { style:"currency", currency:"AOA" })
+)

@@ -16,7 +16,7 @@ const a = await db.cliente.createMany({
           lastName: i.last,
         })
         .toLowerCase(),
-      coordenadas: faker.location.nearbyGPSCoordinate(),
+        googleId: faker.location.nearbyGPSCoordinate(),
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
       numberBI: faker.helpers.fromRegExp(
         /[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/

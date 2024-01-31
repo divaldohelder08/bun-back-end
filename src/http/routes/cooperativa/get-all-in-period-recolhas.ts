@@ -33,10 +33,14 @@ export const getAllReceiptInPeriod = new Elysia().get(
             createdAt: true,
           },
         },
+          filial: {
+          select: {
+            name: true,
+          },
+        },
         status: true,
-        rate: true,
         createdAt: true,
       },
     });
-  },
+  }
 );

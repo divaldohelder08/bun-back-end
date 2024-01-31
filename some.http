@@ -12,4 +12,14 @@ Content-Type: application/json
 
 
 
+### update driver status
+POST   http://localhost:3333/manager/driver/update-status
+Content-Type: application/json
+
+ {
+   "status":"On",
+   "id": "b6122cbd-f290-4c41-8fff-f765c9fba9c8"
+ }
+
+
     

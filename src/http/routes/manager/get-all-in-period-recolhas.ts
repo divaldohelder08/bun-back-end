@@ -1,4 +1,5 @@
 import { db } from "@/db/connection";
+import { hackId } from "@/lib/hack";
 import dayjs from "dayjs";
 import Elysia from "elysia";
 
@@ -6,17 +7,9 @@ export const getAllReceiptInPeriod = new Elysia().get(
   "/all-receipt-in-period",
   async () => {
     const startDate = dayjs().subtract(1, "M");
-    const camamaFilial = await db.filial.findFirst({
-      where: {
-        name: {
-          contains: "Camama",
-        },
-      },
-    });
-
     return await db.recolha.findMany({
       where: {
-        filialId: camamaFilial?.id,
+        filialId: (await hackId()).filialId,
         createdAt: {
           gte: startDate.startOf("day").toDate(),
         },
@@ -42,9 +35,8 @@ export const getAllReceiptInPeriod = new Elysia().get(
           },
         },
         status: true,
-        rate: true,
         createdAt: true,
       },
     });
-  },
+  }
 );

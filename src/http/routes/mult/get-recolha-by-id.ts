@@ -10,11 +10,11 @@ export const GetRecolhaById = new Elysia().get(
         id,
       },
       select: {
-      id:true,
+        id: true,
         status: true,
         createdAt: true,
-        rate: true,
         duration: true,
+        distance: true,
         cliente: {
           select: {
             name: true,
@@ -25,8 +25,6 @@ export const GetRecolhaById = new Elysia().get(
         driver: {
           select: {
             name: true,
-            tel: true,
-            email: true,
             veiculo: {
               select: {
                 matricula: true,

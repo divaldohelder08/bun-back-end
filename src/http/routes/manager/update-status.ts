@@ -1,32 +1,32 @@
 import { db } from "@/db/connection";
 import Elysia, { t } from "elysia";
+import { hackId } from "@/lib/hack";
 
-export const updateProfile = new Elysia().put(
-  "/profile",
-  async ({ set, body }) => {
-    const filial = await db.filial.findFirst({
-      where: {
-        name: {
-          contains: "camama",
-        },
-      },
-    });
-    const { status } = body;
+export const updateFilialStatus = new Elysia().post(
+  "/update-status",
+  async ({ body, set }) => {
+    const { id, status } = body;
+   
+//   await db.filial.findUniqueOrThrow({
+  //    where: {
+    //    id,
+      //},
+    //});
 
     await db.filial.update({
       data: {
         status,
       },
       where: {
-        id: filial?.id,
+        id:(await hackId()).filialId,
       },
     });
-
     set.status = 204;
   },
   {
     body: t.Object({
-      status: t.Enum({ On: "On", Chuva: "Chuva", Noite: "Noite" }),
+      status: t.Enum({ On: "On", Noite: "Noite", Chuva: "Chuva" }),
+      id: t.String(),
     }),
   }
 );

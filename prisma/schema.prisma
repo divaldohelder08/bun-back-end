@@ -25,9 +25,8 @@ enum Status {
 }
 
 enum FilialStatus {
-  On // Quando a tal filial esta On 
-  Chuva // Quando estiver a chover na area da tal filial => ñ trabalhamos
-  Noite // Quando for de noite => ñ trabalhamos
+  aberta // Quando a tal filial esta On 
+  fechado // Quando for de noite => ñ trabalhamos
 }
 
 enum RoleEnum {
@@ -38,6 +37,11 @@ enum RoleEnum {
 enum PaymentStatus {
   expirado //pagamento espirado
   pago //pagamento feito
+}
+
+enum DriverStatus {
+  On
+  Off
 }
 
 model authLinksManager {
@@ -68,6 +72,7 @@ model Manager {
   id        String   @id @default(uuid())
   code      String?  @unique
   name      String   @db.VarChar(250)
+  tel       String   @unique @map("telefone") @db.VarChar(12)
   email     String   @unique
   role      RoleEnum @default(gerente)
   createdAt DateTime @default(now()) @map("created_at")
@@ -81,15 +86,15 @@ model Manager {
 }
 
 model Filial {
-  id          String       @id @default(uuid())
-  managerId   String       @unique @map("manager_id")
-  name        String       @unique @db.VarChar(100)
-  tel         String       @unique @map("telefone") @db.VarChar(12)
-  address     String       @unique // enderço da filial da empresa
-  status      FilialStatus @default(On) //status da filial
-  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision()
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
+  id        String       @id @default(uuid())
+  managerId String       @unique @map("manager_id")
+  name      String       @unique @db.VarChar(100)
+  tel       String       @unique @map("telefone") @db.VarChar(12)
+  address   String       @unique // enderço da filial da empresa
+  status    FilialStatus @default(fechado) //status da filial
+  googleId  String
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
 
   //relações
   clientes Cliente[]
@@ -111,21 +116,21 @@ model Veiculo {
 }
 
 model Driver {
-  id          String   @id @default(uuid())
-  code        String?  @unique
-  filialId    String   @map("filial_id")
-  veiculoId   String   @unique @map("veiculo_id")
-  numberBI    String   @unique @map("numberBI") @db.VarChar(13)
-  name        String   @db.VarChar(150)
-  email       String   @unique
-  coordenadas Float[]  @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
-  // location   Unsupported("geography(Point, 4326)")
-  password    String   @map("senha")
-  tel         String   @unique @map("telefone") @db.VarChar(12)
+  id          String       @id @default(uuid())
+  code        String?      @unique
+  filialId    String       @map("filial_id")
+  veiculoId   String       @unique @map("veiculo_id")
+  numberBI    String       @unique @map("numberBI") @db.VarChar(13)
+  name        String       @db.VarChar(150)
+  email       String       @unique
+  status      DriverStatus @default(Off)
+  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
+  password    String       @map("senha")
+  tel         String       @unique @map("telefone") @db.VarChar(12)
   nascimento  DateTime
   avatar      String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
 
   recolhas        Recolha[]
   authLinksDriver authLinksDriver[]
@@ -145,20 +150,20 @@ model Payment {
 }
 
 model Cliente {
-  id          String        @id @default(uuid())
-  filialId    String        @map("filial_id")
-  paymentId   String        @map("payment_id")
-  name        String        @db.VarChar(250)
-  email       String        @unique
-  numberBI    String        @unique @map("number_bi") @db.VarChar(13)
-  tel         String        @unique @db.VarChar(12)
-  avatar      String?
-  address     String //enderço da casa do cliente
-  coordenadas Float[]       @default([0, 0]) @db.DoublePrecision()
-  status      PaymentStatus @default(pago)
-  nascimento  DateTime
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
+  id         String        @id @default(uuid())
+  filialId   String        @map("filial_id")
+  paymentId  String        @map("payment_id")
+  name       String        @db.VarChar(250)
+  email      String        @unique
+  numberBI   String        @unique @map("number_bi") @db.VarChar(13)
+  tel        String        @unique @db.VarChar(12)
+  avatar     String?
+  address    String //enderço da casa do cliente
+  googleId   String?
+  status     PaymentStatus @default(pago)
+  nascimento DateTime
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
 
   //relações
   recolhas Recolha[]
@@ -174,8 +179,6 @@ model Recolha {
   driverId   String   @map("motorista_id")
   filialId   String   @map("filial_id")
   status     Status   @default(pendente)
-  comment    String?  @db.Text
-  rate       Int?
   distance   Float
   duration   Float
   directions Json

@@ -2,13 +2,16 @@
 CREATE TYPE "Status" AS ENUM ('pendente', 'andamento', 'cancelada', 'finalizada');
 
 -- CreateEnum
-CREATE TYPE "FilialStatus" AS ENUM ('On', 'Chuva', 'Noite');
+CREATE TYPE "FilialStatus" AS ENUM ('aberta', 'fechado');
 
 -- CreateEnum
 CREATE TYPE "RoleEnum" AS ENUM ('superGerente', 'gerente');
 
 -- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('expirado', 'pago');
+
+-- CreateEnum
+CREATE TYPE "DriverStatus" AS ENUM ('On', 'Off');
 
 -- CreateTable
 CREATE TABLE "auth_link_manager" (
@@ -35,6 +38,7 @@ CREATE TABLE "manager" (
     "id" TEXT NOT NULL,
     "code" TEXT,
     "name" VARCHAR(250) NOT NULL,
+    "telefone" VARCHAR(12) NOT NULL,
     "email" TEXT NOT NULL,
     "role" "RoleEnum" NOT NULL DEFAULT 'gerente',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -50,8 +54,8 @@ CREATE TABLE "filias" (
     "name" VARCHAR(100) NOT NULL,
     "telefone" VARCHAR(12) NOT NULL,
     "address" TEXT NOT NULL,
-    "status" "FilialStatus" NOT NULL DEFAULT 'On',
-    "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
+    "status" "FilialStatus" NOT NULL DEFAULT 'fechado',
+    "googleId" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -77,6 +81,7 @@ CREATE TABLE "driver" (
     "numberBI" VARCHAR(13) NOT NULL,
     "name" VARCHAR(150) NOT NULL,
     "email" TEXT NOT NULL,
+    "status" "DriverStatus" NOT NULL DEFAULT 'Off',
     "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
     "senha" TEXT NOT NULL,
     "telefone" VARCHAR(12) NOT NULL,
@@ -108,7 +113,7 @@ CREATE TABLE "clientes" (
     "tel" VARCHAR(12) NOT NULL,
     "avatar" TEXT,
     "address" TEXT NOT NULL,
-    "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
+    "googleId" TEXT,
     "status" "PaymentStatus" NOT NULL DEFAULT 'pago',
     "nascimento" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -124,8 +129,6 @@ CREATE TABLE "recolhas" (
     "motorista_id" TEXT NOT NULL,
     "filial_id" TEXT NOT NULL,
     "status" "Status" NOT NULL DEFAULT 'pendente',
-    "comment" TEXT,
-    "rate" INTEGER,
     "distance" DOUBLE PRECISION NOT NULL,
     "duration" DOUBLE PRECISION NOT NULL,
     "directions" JSONB NOT NULL,
@@ -143,6 +146,9 @@ CREATE UNIQUE INDEX "auth_link_driver_code_key" ON "auth_link_driver"("code");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "manager_code_key" ON "manager"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "manager_telefone_key" ON "manager"("telefone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "manager_email_key" ON "manager"("email");

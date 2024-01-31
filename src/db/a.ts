@@ -1,5 +1,5 @@
-// console.log(faker.helpers.fromRegExp(/[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/));
+import { db } from "./connection";
+import { hackId } from "@/lib/hack";
 
-for (let index = 0; index < 9; index++) {
-  console.log(`${index}123460741465`);
-}
+const a=await db.recolha.findMany()
+console.log(a)

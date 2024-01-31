@@ -12,7 +12,7 @@ async function main() {
   const motoristas = await db.driver.findMany();
   const clientes = await db.cliente.findMany();
   await db.recolha.createMany({
-    data: Array.from({ length: 1 }).map((e, index) => {
+    data: Array.from({ length: 2 }).map(() => {
       return {
         clienteId: faker.helpers.arrayElement(
           Array.from({ length: 4 }).map((_, i) => clientes[i].id)
@@ -21,7 +21,7 @@ async function main() {
           Array.from({ length: 3 }).map((_, i) => motoristas[i].id)
         ),
         filialId: faker.helpers.arrayElement(
-          Array.from({ length: 4 }).map((_, i) => filiais[i].id)
+          Array.from({ length: filiais.length }).map((_, i) => filiais[i].id)
         ),
         status: faker.helpers.arrayElement([
           "pendente",
@@ -30,15 +30,14 @@ async function main() {
           "finalizada",
         ]),
         comment: faker.lorem.paragraph({ max: 1, min: 1 }),
-        rate: Number(faker.helpers.fromRegExp(/[0-5]{1}/)),
         distance: faker.number.float(),
         duration: faker.number.float(),
         directions: JSON.stringify(faker.science.chemicalElement(), null, 2),
       };
     }),
   });
+  console.log(chalk.yellow("✔ dentro"));
 }
-
 setInterval(main, Math.round(Math.random() * 4000));
 console.log(chalk.yellow("✔ recolhas seeded"));
 console.log(chalk.greenBright("Database seeded successfully!"));

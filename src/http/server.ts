@@ -4,6 +4,7 @@ import { Elysia } from "elysia";
 import { indexCooperativa } from "./routes/cooperativa/_index-cooperativa";
 import { indexDriver } from "./routes/driver/_index-driver";
 import { indexManager } from "./routes/manager/_index-manager";
+import { FindPlace } from "./routes/maps/places/find-place";
 import { GetRecolhaById } from "./routes/mult/get-recolha-by-id";
 const app = new Elysia()
   .use(
@@ -22,6 +23,7 @@ const app = new Elysia()
       },
     })
   )
+  .use(FindPlace)
   .use(GetRecolhaById)
   .group("/find", (app) => {
     return app

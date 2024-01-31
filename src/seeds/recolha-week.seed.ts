@@ -36,7 +36,6 @@ async function main({ weeks }: mainProps) {
           "finalizada",
         ]),
         comment: faker.lorem.paragraph({ max: 1, min: 1 }),
-        rate: Number(faker.helpers.fromRegExp(/[0-5]{1}/)),
         distance: faker.number.float(),
         duration: faker.number.float(),
         directions: JSON.stringify(faker.science.chemicalElement(), null, 2),

@@ -50,8 +50,8 @@ export const getDailyReceiptInPeriod = new Elysia().get(
       }
 
       return (
-        new Date(2023, first.month - 1).getTime() -
-        new Date(2023, second.month - 1).getTime()
+        new Date(2024, first.month - 1).getTime() -
+        new Date(2024, second.month - 1).getTime()
       );
     });
   },
@@ -60,5 +60,5 @@ export const getDailyReceiptInPeriod = new Elysia().get(
       from: t.Optional(t.String()),
       to: t.Optional(t.String()),
     }),
-  },
+  }
 );
