@@ -3,7 +3,7 @@ import Elysia, { t } from "elysia";
 
 export const updateDriverStatus = new Elysia().post(
   "/update-status",
-  async ({ body, set }) => {
+  async ({ body }) => {
     const { id, status } = body;
     await db.driver.findUniqueOrThrow({
       where: {
@@ -11,15 +11,27 @@ export const updateDriverStatus = new Elysia().post(
       },
     });
 
-    await db.driver.update({
+    return await db.driver.update({
       data: {
         status,
       },
       where: {
         id,
       },
+      select: {
+        id: true,
+        numberBI: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        status: true,
+        veiculo: {
+          select: {
+            matricula: true,
+          },
+        },
+      },
     });
-    set.status = 204;
   },
   {
     body: t.Object({

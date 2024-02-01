@@ -20,7 +20,7 @@ export const getPopularFilias = new Elysia().get(
       take: 5,
     });
     return drivers.map((e) => {
-      return { name: e.name, amount: e._count.recolhas };
+      return { name: e.name, value: e._count.recolhas };
     });
   }
 );

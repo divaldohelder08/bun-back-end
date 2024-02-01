@@ -7,9 +7,10 @@ export const CreateRecolha = new Elysia().post(
   async ({ params }) => {
     const { clientId } = params;
 
-    const cliente = db.cliente.findUniqueOrThrow({
+    const cliente =await db.cliente.findUniqueOrThrow({
       where: {
         id: clientId,
+        status:"pago"
       },
     });
 
@@ -17,12 +18,26 @@ export const CreateRecolha = new Elysia().post(
 
     await db.filial.findFirstOrThrow({
       where: {
-        id: (await cliente).id,
-        status: "On",
+        id: cliente.filialId,
+        status: "aberta",
       },
     });
 
-   await GoogleMapsClient.({
+
+    const drivers=await db.driver.findMany({
+      where:{
+        filialId: cliente.filialId,
+        status: "On"
+      },
+      select:{
+        id:true,
+        coordenadas:true
+      }
+    })
+
+
+
+   await GoogleMapsClient.distancematrix({
     params:{
 
       mode:driving
@@ -34,7 +49,7 @@ export const CreateRecolha = new Elysia().post(
       where: {
         AND: [
           {
-            filialId: (await cliente).id,
+            filialId: cliente.id,
             status: "On",
           },
         ],
