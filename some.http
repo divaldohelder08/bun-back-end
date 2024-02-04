@@ -1,25 +1,12 @@
-POST   http://localhost:3333/find-place?lat=45&lng=-110
-Content-Type: application/json
-
-### authenticate a driver
-POST   http://localhost:3333/driver/authenticate
+POST   http://localhost:3333/manager/driver/create
 Content-Type: application/json
 
 {
-  "email":"anaclara51@live.com",
-  "password": "e7B9AXuGq3"
+  "matricula": "LD-83-51-H5",
+  "name": "Lucas Braga",
+  "email": "lucas11@yahoo.com",
+  "tel": "951417369",
+  "numberBI": "390732619I699",
+  "nascimento": "2019-09-27T18:08:04.057Z",
+  "avatar": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/339.jpg"
 }
-
-
-
-### update driver status
-POST   http://localhost:3333/manager/driver/update-status
-Content-Type: application/json
-
- {
-   "status":"On",
-   "id": "b6122cbd-f290-4c41-8fff-f765c9fba9c8"
- }
-
-
-    

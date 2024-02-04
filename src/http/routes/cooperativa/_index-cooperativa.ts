@@ -12,6 +12,7 @@ import { getDriverById } from "./get-driver-by-id";
 import { getOverView } from "./get-over-view";
 import { getSuperManagers } from "./get-superManagers";
 import { indexMetrics } from "./metrics/_index-metrics";
+import { updateFilialStatus } from "./update-filial-status";
 
 export const indexCooperativa = new Elysia()
   .use(authenticate)
@@ -26,4 +27,5 @@ export const indexCooperativa = new Elysia()
   .use(getDeleteClientById)
   .use(getOverView)
   .use(getSuperManagers)
+  .use(updateFilialStatus)
   .group("/metrics", (app) => app.use(indexMetrics));

@@ -1,16 +1,15 @@
 import { db } from "@/db/connection";
-import Elysia, { t } from "elysia";
 import { hackId } from "@/lib/hack";
+import Elysia, { t } from "elysia";
 
 export const updateFilialStatus = new Elysia().post(
   "/update-status",
   async ({ body, set }) => {
     const { id, status } = body;
-   
-   await db.filial.findUniqueOrThrow({
-    where: {
-    id,
-    },
+    await db.filial.findUniqueOrThrow({
+      where: {
+        id,
+      },
     });
 
     await db.filial.update({
@@ -18,7 +17,7 @@ export const updateFilialStatus = new Elysia().post(
         status,
       },
       where: {
-        id:(await hackId()).filialId,
+        id,
       },
     });
     set.status = 204;

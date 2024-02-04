@@ -71,6 +71,7 @@ model authLinksDriver {
 model Manager {
   id        String   @id @default(uuid())
   code      String?  @unique
+  key       String
   name      String   @db.VarChar(250)
   tel       String   @unique @map("telefone") @db.VarChar(12)
   email     String   @unique
@@ -125,7 +126,7 @@ model Driver {
   email       String       @unique
   status      DriverStatus @default(Off)
   coordenadas Float[]      @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
-  password    String       @map("senha")
+  password    String       @default("0000") @map("senha")
   tel         String       @unique @map("telefone") @db.VarChar(12)
   nascimento  DateTime
   avatar      String?

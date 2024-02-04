@@ -45,7 +45,8 @@ const app = new Elysia()
   })
   .group("/driver", (app) => app.use(indexDriver))
   .group("/manager", (app) => app.use(indexManager))
-  .group("/cooperativa", (app) => app.use(indexCooperativa));
+  .group("/cooperativa", (app) => app.use(indexCooperativa))
+  .get("/pdf", () => Bun.file("public/download.pdf"));
 
 app.listen(3333);
 console.log(

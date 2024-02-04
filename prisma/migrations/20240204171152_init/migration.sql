@@ -37,6 +37,7 @@ CREATE TABLE "auth_link_driver" (
 CREATE TABLE "manager" (
     "id" TEXT NOT NULL,
     "code" TEXT,
+    "key" TEXT NOT NULL,
     "name" VARCHAR(250) NOT NULL,
     "telefone" VARCHAR(12) NOT NULL,
     "email" TEXT NOT NULL,
@@ -83,7 +84,7 @@ CREATE TABLE "driver" (
     "email" TEXT NOT NULL,
     "status" "DriverStatus" NOT NULL DEFAULT 'Off',
     "coordenadas" DOUBLE PRECISION[] DEFAULT ARRAY[0, 0]::DOUBLE PRECISION[],
-    "senha" TEXT NOT NULL,
+    "senha" TEXT NOT NULL DEFAULT '0000',
     "telefone" VARCHAR(12) NOT NULL,
     "nascimento" TIMESTAMP(3) NOT NULL,
     "avatar" TEXT,
