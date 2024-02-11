@@ -22,7 +22,7 @@ await db.manager.createMany({
       email: "divaldohelder308@gmail.com",
       name: "Divaldo Hélder",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name
+      key: faker.science.chemicalElement().name,
     },
     {
       name: `${Anomes[0].first} ${Anomes[0].last}`,
@@ -33,8 +33,7 @@ await db.manager.createMany({
         })
         .toLowerCase(),
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name
-
+      key: faker.science.chemicalElement().name,
     },
     {
       email: faker.internet
@@ -45,8 +44,7 @@ await db.manager.createMany({
         .toLowerCase(),
       name: `${Anomes[1].first} ${Anomes[1].last}`,
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name
-
+      key: faker.science.chemicalElement().name,
     },
   ],
 });
@@ -65,23 +63,26 @@ await db.filial.createMany({
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
       address: faker.location.streetAddress({ useFullAddress: true }),
       managerId: managers[0].id,
-      googleId: createId(),
+      email: "filial.camama.@mukumbo.dev",
+      coordenadas: [-8.841198, 13.295715],
     },
     {
-      name: `Talatona ${faker.location.state({
+      name: `Golf 2 ${faker.location.state({
         abbreviated: true,
       })}`,
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
       address: faker.location.streetAddress({ useFullAddress: true }),
       managerId: managers[1].id,
-      googleId: createId(),
+      email: "filial.golf2.@mukumbo.dev",
+      coordenadas:[-8.888436, 13.240898],
     },
     {
       name: "vila alice",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
       address: faker.location.streetAddress({ useFullAddress: true }),
+      email: "filial.vilaalice.@mukumbo.dev",
       managerId: managers[2].id,
-      googleId: createId(),
+      coordenadas: [-8.825587, 13.247704],
     },
   ],
 });
@@ -96,23 +97,21 @@ await db.manager.createMany({
       name: "Divaldo Hélder",
       role: "superGerente",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name
+      key: faker.science.chemicalElement().name,
     },
     {
       name: "Fernando Sebastião",
       email: "fernandosebastiao88@gmail.com",
       role: "superGerente",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name
-
+      key: faker.science.chemicalElement().name,
     },
     {
       name: "Edivaldo Pinheiro",
       email: "tabuaman@gmail.com",
       role: "superGerente",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name
-
+      key: faker.science.chemicalElement().name,
     },
   ],
 });
@@ -157,7 +156,7 @@ await db.driver.createMany({
       password: faker.internet.password({ length: 10 }),
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
       numberBI: faker.helpers.fromRegExp(
-        /[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/
+        /[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/,
       ),
       nascimento: faker.date.past({ years: 30 }),
       avatar: faker.image.avatar(),
@@ -200,10 +199,10 @@ await db.cliente.createMany({
           lastName: i.last,
         })
         .toLowerCase(),
-      googleId: createId(),
+        coordenadas: faker.location.nearbyGPSCoordinate({ origin: [-8.8399, 13.2894] }),
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
       numberBI: faker.helpers.fromRegExp(
-        /[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/
+        /[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/,
       ),
       nascimento: faker.date.past({ years: 30 }),
       avatar: faker.image.avatar(),

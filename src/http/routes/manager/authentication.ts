@@ -5,8 +5,8 @@ import Elysia, { Static, t } from "elysia";
 import { NotAManagerError, UnauthorizedError } from "../Errors";
 
 const jwtPayloadSchema = t.Object({
-  id: t.String(),
-  filialId: t.Optional(t.String()),
+  sub: t.String(),
+  id: t.Optional(t.String()),
 });
 
 export const authentication = new Elysia()
@@ -58,13 +58,13 @@ export const authentication = new Elysia()
   .derive(({ getCurrentUser }) => {
     return {
       getUser: async () => {
-        const { id, filialId } = await getCurrentUser();
-        console.log(id, filialId);
-        if (!id || !filialId) {
+        const { id, sub } = await getCurrentUser();
+        console.log(id, sub);
+        if (!id || !sub) {
           throw new NotAManagerError();
         }
 
-        return { id, filialId };
+        return { id, sub };
       },
     };
   });

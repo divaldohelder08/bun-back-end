@@ -11,6 +11,9 @@ export const getClientById = new Elysia().get(
       by: ["createdAt"],
       where: {
         clienteId: id,
+         status: {
+          in: ["finalizada", "cancelada"],
+        },
       },
       _count: true,
       orderBy: {

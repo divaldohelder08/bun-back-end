@@ -6,7 +6,7 @@ import { NotAManagerError, UnauthorizedError } from "../Errors";
 
 const jwtPayloadSchema = t.Object({
   sub: t.String(),
-  filialId: t.Optional(t.String()),
+  id: t.Optional(t.String()),
 });
 
 export const authentication = new Elysia()
@@ -38,7 +38,6 @@ export const authentication = new Elysia()
         const payload = await jwt.verify(auth);
 
         if (!payload) {
-          console.log("caralho");
           throw new UnauthorizedError();
         }
 

@@ -56,22 +56,10 @@ model authLinksManager {
   @@map("auth_link_manager")
 }
 
-model authLinksDriver {
-  id        String   @id @default(uuid())
-  code      String   @unique
-  driverId  String   @map("driver_id")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  //relações
-  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
-
-  @@map("auth_link_driver")
-}
-
 model Manager {
   id        String   @id @default(uuid())
   code      String?  @unique
-  key       String
+  key       String   @default("0000")
   name      String   @db.VarChar(250)
   tel       String   @unique @map("telefone") @db.VarChar(12)
   email     String   @unique
@@ -87,15 +75,16 @@ model Manager {
 }
 
 model Filial {
-  id        String       @id @default(uuid())
-  managerId String       @unique @map("manager_id")
-  name      String       @unique @db.VarChar(100)
-  tel       String       @unique @map("telefone") @db.VarChar(12)
-  address   String       @unique // enderço da filial da empresa
-  status    FilialStatus @default(fechado) //status da filial
-  googleId  String
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @updatedAt @map("updated_at")
+  id          String       @id @default(uuid())
+  managerId   String       @unique @map("manager_id")
+  name        String       @unique @db.VarChar(100)
+  tel         String       @unique @map("telefone") @db.VarChar(12)
+  address     String       @unique // enderço da filial da empresa
+  email       String       @unique
+  status      FilialStatus @default(fechado) //status da filial
+  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
 
   //relações
   clientes Cliente[]
@@ -133,10 +122,9 @@ model Driver {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
 
-  recolhas        Recolha[]
-  authLinksDriver authLinksDriver[]
-  veiculo         Veiculo           @relation(fields: [veiculoId], references: [id])
-  filial          Filial            @relation(fields: [filialId], references: [id], onDelete: Cascade)
+  recolhas Recolha[]
+  veiculo  Veiculo   @relation(fields: [veiculoId], references: [id])
+  filial   Filial    @relation(fields: [filialId], references: [id], onDelete: Cascade)
 
   @@map("driver")
 }
@@ -151,20 +139,20 @@ model Payment {
 }
 
 model Cliente {
-  id         String        @id @default(uuid())
-  filialId   String        @map("filial_id")
-  paymentId  String        @map("payment_id")
-  name       String        @db.VarChar(250)
-  email      String        @unique
-  numberBI   String        @unique @map("number_bi") @db.VarChar(13)
-  tel        String        @unique @db.VarChar(12)
-  avatar     String?
-  address    String //enderço da casa do cliente
-  googleId   String?
-  status     PaymentStatus @default(pago)
-  nascimento DateTime
-  createdAt  DateTime      @default(now()) @map("created_at")
-  updatedAt  DateTime      @updatedAt @map("updated_at")
+  id          String        @id @default(uuid())
+  filialId    String        @map("filial_id")
+  paymentId   String        @map("payment_id")
+  name        String        @db.VarChar(250)
+  email       String        @unique
+  numberBI    String        @unique @map("number_bi") @db.VarChar(13)
+  tel         String        @unique @db.VarChar(12)
+  avatar      String?
+  address     String //enderço da casa do cliente
+  coordenadas Float[]       @default([0, 0]) @db.DoublePrecision()
+  status      PaymentStatus @default(pago)
+  nascimento  DateTime
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
 
   //relações
   recolhas Recolha[]

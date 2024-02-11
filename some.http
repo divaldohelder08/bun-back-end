@@ -1,12 +1,8 @@
-POST   http://localhost:3333/manager/driver/create
+
+POST   http://localhost:3333/driver/authenticate
 Content-Type: application/json
 
 {
-  "matricula": "LD-83-51-H5",
-  "name": "Lucas Braga",
-  "email": "lucas11@yahoo.com",
-  "tel": "951417369",
-  "numberBI": "390732619I699",
-  "nascimento": "2019-09-27T18:08:04.057Z",
-  "avatar": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/339.jpg"
+  email:"rafael92@bol.com.br",
+  password:"LEC69slM7O"
 }

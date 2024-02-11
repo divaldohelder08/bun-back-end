@@ -36,7 +36,7 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
 
     await signUser({
       id: authLinkFromCode.managerId,
-      filialId: managedFilial?.id,
+      sub: "aquela merda do beer",
     });
 
     await db.authLinksManager.delete({

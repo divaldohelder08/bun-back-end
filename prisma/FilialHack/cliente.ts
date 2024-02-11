@@ -1,7 +1,6 @@
 import { db } from "@/db/connection";
 import { hackId } from "@/lib/hack";
 import { fakerPT_BR as faker } from "@faker-js/faker";
-import { createId } from "@paralleldrive/cuid2";
 import dayjs from "dayjs";
 const today = dayjs();
 export async function clientHack() {
@@ -22,10 +21,12 @@ export async function clientHack() {
               lastName: nomes.last,
             })
             .toLowerCase(),
-          googleId: createId(),
+          coordenadas: faker.location.nearbyGPSCoordinate({
+            origin: [-8.8399, 13.2894],
+          }),
           tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
           numberBI: faker.helpers.fromRegExp(
-            /[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/
+            /[^a-zA-Z]{9}[^a-z0-9]{2}[^a-zA-Z]{2}/,
           ),
           nascimento: faker.date.past({ years: 30 }),
           avatar: faker.image.avatar(),

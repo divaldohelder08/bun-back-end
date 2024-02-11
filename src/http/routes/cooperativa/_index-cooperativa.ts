@@ -13,6 +13,7 @@ import { getOverView } from "./get-over-view";
 import { getSuperManagers } from "./get-superManagers";
 import { indexMetrics } from "./metrics/_index-metrics";
 import { updateFilialStatus } from "./update-filial-status";
+import { indexGeoMap } from "./geo-map/_index-geo-map";
 
 export const indexCooperativa = new Elysia()
   .use(authenticate)
@@ -28,4 +29,5 @@ export const indexCooperativa = new Elysia()
   .use(getOverView)
   .use(getSuperManagers)
   .use(updateFilialStatus)
-  .group("/metrics", (app) => app.use(indexMetrics));
+  .group("/metrics", (app) => app.use(indexMetrics))
+  .group("/geo-map", (app)=>app.use(indexGeoMap))

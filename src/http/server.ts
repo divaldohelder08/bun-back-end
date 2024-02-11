@@ -21,14 +21,14 @@ const app = new Elysia()
 
         return true;
       },
-    })
+    }),
   )
   .use(FindPlace)
   .use(GetRecolhaById)
   .group("/find", (app) => {
     return app
       .get("/filiais", () =>
-        db.filial.findMany({ select: { id: true, name: true } })
+        db.filial.findMany({ select: { id: true, name: true } }),
       )
       .get("/drivers", async () => {
         return await db.driver.findMany();
@@ -46,9 +46,13 @@ const app = new Elysia()
   .group("/driver", (app) => app.use(indexDriver))
   .group("/manager", (app) => app.use(indexManager))
   .group("/cooperativa", (app) => app.use(indexCooperativa))
-  .get("/pdf", () => Bun.file("public/download.pdf"));
+  .get("/pdf", async ({ set }) => {
+    // set.headers('Content-Type', 'application/pdf');
+    // set.headers('Content-Disposition', 'attachment; filename=agendamento.pdf');
+    return Bun.file("src/agendamento.pdf");
+  });
 
 app.listen(3333);
 console.log(
-  `🔥 HTTP server running at http://${app.server?.hostname}:${app.server?.port}`
+  `🔥 HTTP server running at http://${app.server?.hostname}:${app.server?.port}`,
 );

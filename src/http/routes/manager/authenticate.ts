@@ -8,12 +8,13 @@ import Elysia, { t } from "elysia";
 export const authenticate = new Elysia().post(
   "/authenticate",
   async ({ body }) => {
-    const { email, filial_id } = body;
+    const { email, filialId } = body;
     const user = await db.filial.findFirst({
       where: {
-        id: filial_id,
+        id: filialId,
         manager: {
-          email,
+          role:"gerente",
+          email
         },
       },
       select: {
@@ -61,7 +62,7 @@ export const authenticate = new Elysia().post(
   {
     body: t.Object({
       email: t.String({ format: "email" }),
-      filial_id: t.String(),
+      filialId: t.String(),
     }),
   },
 );

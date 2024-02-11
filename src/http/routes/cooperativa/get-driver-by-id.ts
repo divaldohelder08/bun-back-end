@@ -46,6 +46,9 @@ export const getDriverById = new Elysia().get(
       by: ["createdAt"],
       where: {
         driverId: id,
+        status: {
+          in: ["finalizada", "cancelada"],
+        },
       },
       _count: true,
       orderBy: {
