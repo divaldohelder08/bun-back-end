@@ -13,5 +13,5 @@ export const getSuperManagers = new Elysia().get(
         email: true,
       },
     });
-  }
+  },
 );

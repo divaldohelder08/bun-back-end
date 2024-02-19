@@ -10,12 +10,12 @@ export const getManagerProfile = new Elysia().get(
         id: (await hackId()).managerId,
       },
       select: {
-      id:true,
+        id: true,
         name: true,
         email: true,
         role: true,
         createdAt: true,
-        tel:true,
+        tel: true,
         Filial: {
           select: {
             status: true,
@@ -23,5 +23,5 @@ export const getManagerProfile = new Elysia().get(
         },
       },
     });
-  }
+  },
 );

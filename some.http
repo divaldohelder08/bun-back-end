@@ -1,8 +1,17 @@
-
-POST   http://localhost:3333/driver/authenticate
+PUT   http://localhost:3333/driver/settings/update-key
 Content-Type: application/json
 
 {
-  email:"rafael92@bol.com.br",
-  password:"LEC69slM7O"
+  "antiga":"ZHwZ16WLAQ",
+  "nova":"OlaMundo"
 }
+
+
+### 
+GET   http://localhost:3333/find/drivers
+
+###
+DELETE http://localhost:3333/manager/driver/delete?id=ola%mundo&key=0000
+
+###
+DELETE http://localhost:3333/manager/client/delete?id=ola%mundo&key=0000

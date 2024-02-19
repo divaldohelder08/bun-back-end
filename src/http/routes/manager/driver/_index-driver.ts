@@ -1,7 +1,9 @@
 import Elysia from "elysia";
-import { createDriver } from "./create-driver";
-import { updateDriverStatus } from "./driver-update-status";
+import { create } from "./create";
+import { updateStatus } from "./update-status";
+import { deleteDriver } from "./delete";
 
 export const indexDriver = new Elysia()
-  .use(updateDriverStatus)
-  .use(createDriver);
+  .use(updateStatus)
+  .use(create)
+  .use(deleteDriver);

@@ -1,3 +1,5 @@
 node_modules
 .env.local
 .schema
+prisma/migrations
+deprecated

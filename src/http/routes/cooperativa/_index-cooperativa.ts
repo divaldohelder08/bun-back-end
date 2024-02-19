@@ -2,6 +2,7 @@ import Elysia from "elysia";
 import { authenticate } from "./authenticate";
 import { authenticateFromLink } from "./authenticate-from-link";
 import { deleteClient } from "./delete-client";
+import { indexGeoMap } from "./geo-map/_index-geo-map";
 import { getAllClients } from "./get-all-clients";
 import { getAllDrivers } from "./get-all-drivers";
 import { getAllFilial } from "./get-all-filial";
@@ -13,7 +14,6 @@ import { getOverView } from "./get-over-view";
 import { getSuperManagers } from "./get-superManagers";
 import { indexMetrics } from "./metrics/_index-metrics";
 import { updateFilialStatus } from "./update-filial-status";
-import { indexGeoMap } from "./geo-map/_index-geo-map";
 
 export const indexCooperativa = new Elysia()
   .use(authenticate)
@@ -30,4 +30,4 @@ export const indexCooperativa = new Elysia()
   .use(getSuperManagers)
   .use(updateFilialStatus)
   .group("/metrics", (app) => app.use(indexMetrics))
-  .group("/geo-map", (app)=>app.use(indexGeoMap))
+  .group("/geo-map", (app) => app.use(indexGeoMap));

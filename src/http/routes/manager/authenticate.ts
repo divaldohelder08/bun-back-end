@@ -10,11 +10,11 @@ export const authenticate = new Elysia().post(
   async ({ body }) => {
     const { email, filialId } = body;
     const user = await db.filial.findFirst({
-      where: {
+      where: {  
         id: filialId,
         manager: {
-          role:"gerente",
-          email
+          role: "gerente",
+          email,
         },
       },
       select: {

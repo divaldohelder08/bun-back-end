@@ -22,7 +22,6 @@ await db.manager.createMany({
       email: "divaldohelder308@gmail.com",
       name: "Divaldo Hélder",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name,
     },
     {
       name: `${Anomes[0].first} ${Anomes[0].last}`,
@@ -33,7 +32,6 @@ await db.manager.createMany({
         })
         .toLowerCase(),
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name,
     },
     {
       email: faker.internet
@@ -44,7 +42,6 @@ await db.manager.createMany({
         .toLowerCase(),
       name: `${Anomes[1].first} ${Anomes[1].last}`,
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name,
     },
   ],
 });
@@ -97,21 +94,18 @@ await db.manager.createMany({
       name: "Divaldo Hélder",
       role: "superGerente",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name,
     },
     {
       name: "Fernando Sebastião",
       email: "fernandosebastiao88@gmail.com",
       role: "superGerente",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name,
     },
     {
       name: "Edivaldo Pinheiro",
       email: "tabuaman@gmail.com",
       role: "superGerente",
       tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-      key: faker.science.chemicalElement().name,
     },
   ],
 });

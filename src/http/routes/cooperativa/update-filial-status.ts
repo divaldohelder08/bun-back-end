@@ -27,5 +27,5 @@ export const updateFilialStatus = new Elysia().post(
       status: t.Enum({ aberta: "aberta", fechado: "fechado" }),
       id: t.String(),
     }),
-  }
+  },
 );

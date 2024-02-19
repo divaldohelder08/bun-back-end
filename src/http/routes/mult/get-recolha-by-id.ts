@@ -44,5 +44,5 @@ export const GetRecolhaById = new Elysia().get(
     params: t.Object({
       id: t.String(),
     }),
-  }
+  },
 );

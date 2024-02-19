@@ -6,10 +6,10 @@ export const getClients = new Elysia().get("/clients", async () => {
     select: {
       id: true,
       name: true,
-      coordenadas:true
+      coordenadas: true,
     },
-    where:{
-      filialId:(await hackId()).filialId
-    }
+    where: {
+      filialId: (await hackId()).filialId,
+    },
   });
 });

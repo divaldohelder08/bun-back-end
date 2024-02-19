@@ -13,9 +13,9 @@ export const getPopularDrivers = new Elysia().get(
         _count: {
           select: {
             recolhas: {
-              where:{
-                status:"finalizada"
-              }
+              where: {
+                status: "finalizada",
+              },
             },
           },
         },
@@ -26,5 +26,5 @@ export const getPopularDrivers = new Elysia().get(
     return drivers.map((e) => {
       return { name: e.name, value: e._count.recolhas };
     });
-  }
+  },
 );

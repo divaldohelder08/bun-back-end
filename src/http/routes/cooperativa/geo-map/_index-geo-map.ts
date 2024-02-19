@@ -6,4 +6,4 @@ import { getFilias } from "./filias";
 export const indexGeoMap = new Elysia()
   .use(getFilias)
   .use(getDrivers)
-  .use(getClients );
+  .use(getClients);

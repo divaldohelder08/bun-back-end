@@ -23,5 +23,5 @@ export const getDeleteClientById = new Elysia().delete(
     params: t.Object({
       id: t.String(),
     }),
-  }
+  },
 );

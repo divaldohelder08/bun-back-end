@@ -17,5 +17,6 @@ export async function hackDriverId() {
       filialId: (await hackId()).filialId,
     },
   });
+  console.log(driver)
   return { driverId: driver.id };
 }

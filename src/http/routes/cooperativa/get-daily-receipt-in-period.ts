@@ -60,5 +60,5 @@ export const getDailyReceiptInPeriod = new Elysia().get(
       from: t.Optional(t.String()),
       to: t.Optional(t.String()),
     }),
-  }
+  },
 );

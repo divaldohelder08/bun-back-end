@@ -9,7 +9,7 @@ export const getAllDrivers = new Elysia().get("/get-all-drivers", async () => {
       email: true,
       nascimento: true,
       createdAt: true,
-      status:true,
+      status: true,
       filial: {
         select: {
           id: true,

@@ -10,13 +10,13 @@ await db.recolha.createMany({
   data: Array.from({ length: 54 }).map(() => {
     return {
       clienteId: faker.helpers.arrayElement(
-        Array.from({ length: 4 }).map((_, i) => clientes[i].id)
+        Array.from({ length: 4 }).map((_, i) => clientes[i].id),
       ),
       driverId: faker.helpers.arrayElement(
-        Array.from({ length: 3 }).map((_, i) => motoristas[i].id)
+        Array.from({ length: 3 }).map((_, i) => motoristas[i].id),
       ),
       filialId: faker.helpers.arrayElement(
-        Array.from({ length: filiais.length }).map((_, i) => filiais[i].id)
+        Array.from({ length: filiais.length }).map((_, i) => filiais[i].id),
       ),
       status: faker.helpers.arrayElement([
         "pendente",

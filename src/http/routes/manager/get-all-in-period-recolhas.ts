@@ -38,5 +38,5 @@ export const getAllReceiptInPeriod = new Elysia().get(
         createdAt: true,
       },
     });
-  }
+  },
 );

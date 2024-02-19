@@ -6,7 +6,7 @@ export const UpdateTel = new Elysia().post(
   "/update-tel",
   async ({ body }) => {
     const { tel } = body;
-    await db.manager.update({ 
+    await db.manager.update({
       where: {
         id: (await hackId()).managerId,
       },

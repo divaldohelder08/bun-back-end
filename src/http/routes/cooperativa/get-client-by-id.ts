@@ -11,7 +11,7 @@ export const getClientById = new Elysia().get(
       by: ["createdAt"],
       where: {
         clienteId: id,
-         status: {
+        status: {
           in: ["finalizada", "cancelada"],
         },
       },
@@ -56,5 +56,5 @@ export const getClientById = new Elysia().get(
     params: t.Object({
       id: t.String(),
     }),
-  }
+  },
 );

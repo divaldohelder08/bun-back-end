@@ -18,5 +18,5 @@ export const getPopularFilias = new Elysia().get(
     return filias.map((e) => {
       return { name: e.name, amount: e._count.Recolha };
     });
-  }
+  },
 );

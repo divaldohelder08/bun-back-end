@@ -5,7 +5,7 @@ export const getFilias = new Elysia().get("/filias", async () => {
     select: {
       id: true,
       name: true,
-      coordenadas:true
+      coordenadas: true,
     },
   });
 });
