@@ -1,6 +1,6 @@
 import { db } from "@/db/connection";
 import { cors } from "@elysiajs/cors";
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import { indexCooperativa } from "./routes/cooperativa/_index-cooperativa";
 import { indexDriver } from "./routes/driver/_index-driver";
 import { indexManager } from "./routes/manager/_index-manager";
@@ -27,21 +27,36 @@ const app = new Elysia()
   .use(GetRecolhaById)
   .group("/find", (app) => {
     return app
-      .get("/filiais", () =>
+      .get("/filias", () =>
         db.filial.findMany({ select: { id: true, name: true } }),
       )
       .get("/drivers", async () => {
         return await db.driver.findMany();
       })
       .get("/clients", async () => {
-        return await db.cliente.findMany();
+        return await db.client.findMany();
       })
       .get("/managers", async () => {
         return await db.manager.findMany();
       })
       .get("/recolha", async () => {
         return await db.recolha.findMany();
-      });
+      })
+      .get(
+        "/filial/:id",
+        async ({ params }) => {
+          const { id } = params;
+          return db.filial.findUnique({
+            select: { id: true, name: true },
+            where: { id },
+          });
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+        },
+      );
   })
   .group("/driver", (app) => app.use(indexDriver))
   .group("/manager", (app) => app.use(indexManager))

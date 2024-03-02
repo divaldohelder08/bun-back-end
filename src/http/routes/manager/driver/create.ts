@@ -46,7 +46,7 @@ export const create = new Elysia().post(
     await db.veiculo.create({
       data: {
         matricula,
-        Driver: {
+        driver: {
           create: {
             filialId: (await hackId()).filialId,
             numberBI,

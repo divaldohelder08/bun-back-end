@@ -7,7 +7,7 @@ export const deleteClient = new Elysia().get(
     const { id } = params;
 
     // Verifica se o cliente existe
-    const existingClient = await db.cliente.findFirst({
+    const existingClient = await db.client.findFirst({
       where: { id },
     });
 
@@ -18,7 +18,7 @@ export const deleteClient = new Elysia().get(
     console.table(existingClient); // Apenas para fins de depuração
 
     // Exclui o cliente
-    const deletedClient = await db.cliente.delete({
+    const deletedClient = await db.client.delete({
       where: { id: existingClient.id },
     });
 

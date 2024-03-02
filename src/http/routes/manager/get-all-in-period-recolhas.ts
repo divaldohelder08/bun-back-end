@@ -16,7 +16,7 @@ export const getAllReceiptInPeriod = new Elysia().get(
       },
       select: {
         id: true,
-        cliente: {
+        client: {
           select: {
             id: true,
             name: true,

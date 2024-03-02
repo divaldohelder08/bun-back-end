@@ -1,6 +1,7 @@
 import Elysia from "elysia";
 import { authenticate } from "./authenticate";
 import { authenticateFromLink } from "./authenticate-from-link";
+import { indexClient } from "./client/_index-client";
 import { indexDriver } from "./driver/_index-driver";
 import { indexGeoMap } from "./geo-map/_index-geo-map";
 import { getAllClients } from "./get-all-clients";
@@ -11,7 +12,6 @@ import { getOverView } from "./get-over-view";
 import { indexMetrics } from "./metrics/_index-metrics";
 import { indexManagerSetting } from "./settings/_index-settings";
 import { updateFilialStatus } from "./update-status";
-import { indexClient } from "./client/_index-client";
 
 export const indexManager = new Elysia()
   .use(authenticate) // /manager/authenticate => Post

@@ -1,57 +1,39 @@
 import { db } from "@/db/connection";
 import { env } from "@/env";
-// import { resend } from "@/mail/client";
-// import { MagicLinkAuthTemplate } from "@/mail/templates/magic-link-auth-template";
-import { createId } from "@paralleldrive/cuid2";
 import Elysia, { t } from "elysia";
+import jwt from "jsonwebtoken";
 
 export const authenticate = new Elysia().post(
   "/super-manager/authenticate",
   async ({ body }) => {
     const { email } = body;
-    const user = await db.manager.findUnique({
+
+    const supermanager = await db.manager.findUnique({
       where: {
         email,
         role: "superGerente",
       },
-      select: {
-        id: true,
-        name: true,
-        role: true,
-      },
     });
 
-    if (!user) {
-      throw new Error("Credenciais inválidas");
+    if (!supermanager) {
+      throw new Error("Credencial inválida");
     }
-    const authLinkCode = createId();
+    const supermanagerInfo = {
+      id: supermanager.id,
+      name: supermanager.name,
+      email: supermanager.email,
+      avatar: supermanager.avatar,
+      role: "supermanager",
+    };
 
-    await db.authLinksManager.create({
-      data: { managerId: user.id, code: authLinkCode },
+    const token = jwt.sign({ id: supermanagerInfo.id }, env.JWT_SECRET_KEY, {
+      expiresIn: "7d",
     });
-
-    const authLink = new URL(
-      "/cooperativa/auth-links/authenticate",
-      env.API_BASE_URL,
-    );
-    authLink.searchParams.set("code", authLinkCode);
-    authLink.searchParams.set("redirect", env.AUTH_REDIRECT_URL_SUPERMANAGER);
-    console.log(authLink.href);
-
-    // const mail = await resend.emails.send({
-    //  from: "Mukumbo <naoresponda@fala.dev>",
-    //to: email,
-    // subject: "[Mukumbo] Link para login",
-    // react: MagicLinkAuthTemplate({
-    // userEmail: email,
-    //authLink: authLink.toString(),
-    //username: user.manager.name,
-    //}),
-    //});
-
-    //    if (!mail) {
-    //    throw new Error("Email  enviado");
-    //}
+    console.log(token);
+    return {
+      user: supermanagerInfo,
+      token,
+    };
   },
   {
     body: t.Object({

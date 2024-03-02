@@ -1,5 +1,4 @@
 import { db } from "@/db/connection";
-import { hackId } from "@/lib/hack";
 import Elysia, { t } from "elysia";
 
 export const updateFilialStatus = new Elysia().post(

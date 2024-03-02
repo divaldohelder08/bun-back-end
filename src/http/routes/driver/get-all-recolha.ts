@@ -1,5 +1,5 @@
 import { db } from "@/db/connection";
-import { hackDriverId, hackId } from "@/lib/hack";
+import { hackDriverId } from "@/lib/hack";
 import Elysia from "elysia";
 
 export const getAllRecolha = new Elysia().get("/get-all-recolha", async () => {

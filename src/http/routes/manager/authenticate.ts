@@ -9,13 +9,21 @@ export const authenticate = new Elysia().post(
   "/authenticate",
   async ({ body }) => {
     const { email, filialId } = body;
+    // AND: [
+    //   { createdAt: { gte: startOfLastMonth } },
+    //   { status: "cancelada" }, // Adicione esta condição para considerar apenas recolhas canceladas
+    // ],
     const user = await db.filial.findFirst({
-      where: {  
-        id: filialId,
-        manager: {
-          role: "gerente",
-          email,
-        },
+      where: {
+        AND: [
+          { id: filialId },
+          {
+            manager: {
+              role: "gerente",
+              email,
+            },
+          },
+        ],
       },
       select: {
         id: true,

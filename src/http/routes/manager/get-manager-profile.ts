@@ -16,7 +16,7 @@ export const getManagerProfile = new Elysia().get(
         role: true,
         createdAt: true,
         tel: true,
-        Filial: {
+        filial: {
           select: {
             status: true,
           },

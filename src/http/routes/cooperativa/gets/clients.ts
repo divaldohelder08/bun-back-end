@@ -1,8 +1,7 @@
 import { db } from "@/db/connection";
 import Elysia from "elysia";
-//Spell:ignore FILIALID_BASE
-export const getAllClients = new Elysia().get("/get-all-clients", async () => {
-  return await db.cliente.findMany({
+export const getClients = new Elysia().get("/clients", async () => {
+  return await db.client.findMany({
     select: {
       id: true,
       name: true,
@@ -12,7 +11,7 @@ export const getAllClients = new Elysia().get("/get-all-clients", async () => {
       createdAt: true,
       filial: {
         select: {
-          id: true,
+          name: true,
         },
       },
     },

@@ -24,7 +24,7 @@ export const getProfile = new Elysia()
             name: true,
           },
         },
-        veicolo: {
+        veiculo: {
           select: {
             matricula: true,
           },

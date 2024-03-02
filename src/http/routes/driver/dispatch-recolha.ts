@@ -26,7 +26,7 @@
 //       select: {
 //         id:true,
 //         createdAt: true,
-//         cliente: {
+//          clients: {
 //           select: {
 //             id: true,
 //             name: true,

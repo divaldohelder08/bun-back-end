@@ -15,9 +15,9 @@ export const getOverView = new Elysia().get("/get-over-view", async () => {
       createdAt: true,
       _count: {
         select: {
-          clientes: true,
+          clients: true,
           drivers: true,
-          Recolha: true,
+          recolhas: true,
         },
       },
     },

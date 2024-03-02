@@ -3,10 +3,9 @@ import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
 
 export const getClientById = new Elysia().get(
-  "/get-client-by-id/:id",
+  "/client-by-id/:id",
   async ({ params }) => {
     const { id } = params;
-
     const heatData = await db.recolha.groupBy({
       by: ["createdAt"],
       where: {
@@ -22,7 +21,7 @@ export const getClientById = new Elysia().get(
     });
 
     return {
-      client: await db.cliente.findUniqueOrThrow({
+      client: await db.client.findUniqueOrThrow({
         where: {
           id,
         },

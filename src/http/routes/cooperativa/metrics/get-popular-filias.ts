@@ -8,7 +8,7 @@ export const getPopularFilias = new Elysia().get(
       select: {
         _count: {
           select: {
-            Recolha: true,
+            recolhas: true,
           },
         },
         name: true,
@@ -16,7 +16,7 @@ export const getPopularFilias = new Elysia().get(
       take: 5,
     });
     return filias.map((e) => {
-      return { name: e.name, amount: e._count.Recolha };
+      return { name: e.name, amount: e._count.recolhas };
     });
   },
 );

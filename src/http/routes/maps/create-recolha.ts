@@ -7,7 +7,7 @@ export const CreateRecolha = new Elysia().post(
   async ({ params }) => {
     const { clientId } = params;
 
-    const cliente =await db.cliente.findUniqueOrThrow({
+    const cliente =await db.client.findUniqueOrThrow({
       where: {
         id: clientId,
         status:"pago"

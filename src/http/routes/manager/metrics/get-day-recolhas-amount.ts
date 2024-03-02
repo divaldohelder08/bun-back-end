@@ -28,7 +28,7 @@ export const getDayRecolhasAmount = new Elysia()
     const startOfYesterday = yesterday.toDate();
     console.log(today.toDate());
     const ordersPerDay = await db.recolha.groupBy({
-      by: ["filialId", "createdAt"],
+      by: ["createdAt"],
       where: {
         AND: [
           { filialId: camamaFilial?.id },

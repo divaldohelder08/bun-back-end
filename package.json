@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "bun --watch src/http/server.ts",
-    "migrate": "bun prisma migrate dev",
+    "mig": "bun prisma migrate dev",
     "seed": "bun prisma/seed.ts",
-    "biome:check": "biome check src"
+    "biome:check": "biome check src",
+    "biome:lint": "biome check --apply-unsafe src",
+    "rm":"sudo rm -r prisma/migrations/"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"

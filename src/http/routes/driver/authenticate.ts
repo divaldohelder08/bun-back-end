@@ -23,6 +23,7 @@ export const authenticate = new Elysia().use(authentication).post(
       name: driver.name,
       email: driver.email,
       avatar: driver.avatar,
+      role: "driver",
     };
 
     const token = jwt.sign({ id: driver.id }, env.JWT_SECRET_KEY, {

@@ -15,7 +15,7 @@ export const GetRecolhaById = new Elysia().get(
         createdAt: true,
         duration: true,
         distance: true,
-        cliente: {
+        client: {
           select: {
             name: true,
             tel: true,

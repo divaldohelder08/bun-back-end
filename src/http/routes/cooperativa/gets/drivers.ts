@@ -1,6 +1,6 @@
 import { db } from "@/db/connection";
 import Elysia from "elysia";
-export const getAllDrivers = new Elysia().get("/get-all-drivers", async () => {
+export const getDrivers = new Elysia().get("/drivers", async () => {
   return await db.driver.findMany({
     select: {
       id: true,
@@ -12,7 +12,7 @@ export const getAllDrivers = new Elysia().get("/get-all-drivers", async () => {
       status: true,
       filial: {
         select: {
-          id: true,
+          name: true,
         },
       },
       veiculo: {

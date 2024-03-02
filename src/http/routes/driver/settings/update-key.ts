@@ -6,8 +6,8 @@ export const UpdateKey = new Elysia().put(
   "/update-key",
   async ({ body, set }) => {
     const { antiga, nova } = body;
-    console.log("aqui")
-    
+    console.log("aqui");
+
     //pegar aquelas merdas do header
     if (
       !(await db.driver.findUnique({
@@ -17,12 +17,12 @@ export const UpdateKey = new Elysia().put(
         },
       }))
     ) {
-    console.log("erro")
+      console.log("erro");
       throw Error("Atual senha incorreta");
     }
-    console.log("passou")
+    console.log("passou");
 
-   return await db.driver.update({
+    return await db.driver.update({
       where: {
         id: (await hackDriverId()).driverId,
       },
@@ -30,7 +30,6 @@ export const UpdateKey = new Elysia().put(
         password: nova,
       },
     });
-    
   },
   {
     body: t.Object({

@@ -10,7 +10,7 @@ export const getAllClients = new Elysia().get("/get-all-clients", async () => {
     },
   });
 
-  return await db.cliente.findMany({
+  return await db.client.findMany({
     where: {
       filialId: camamaFilial?.id,
     },

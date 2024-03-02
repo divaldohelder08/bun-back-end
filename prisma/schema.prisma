@@ -17,6 +17,143 @@ generator erd {
   output   = "../ERD.svg"
 }
 
+model Manager {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(250)
+  email     String   @unique
+  avatar    String?
+  sexo      Sexo
+  tel       String   @unique @map("telefone") @db.VarChar(9)
+  password  String   @default("0000") @map("senha")
+  role      RoleEnum @default(gerente)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  //relações
+  filial Filial[]
+
+  @@map("manager")
+}
+
+model Filial {
+  id          String       @id @default(uuid())
+  managerId   String       @unique @map("manager_id")
+  name        String       @unique @db.VarChar(100)
+  tel         String       @unique @map("telefone") @db.VarChar(12)
+  address     String       @unique // enderço da filial da empresa
+  email       String       @unique
+  status      FilialStatus @default(fechado) //status da filial
+  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  //relações
+  clients  Client[]
+  drivers  Driver[]
+  recolhas Recolha[]
+  manager  Manager   @relation(fields: [managerId], references: [id], onDelete: Cascade)
+}
+
+model Veiculo {
+  id        String   @id @default(uuid())
+  matricula String   @unique @db.VarChar(11)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  driver    Driver[]
+
+  @@map("veiculo")
+}
+
+model Driver {
+  id          String       @id @default(uuid())
+  code        String?      @unique
+  filialId    String       @map("filial_id")
+  veiculoId   String?       @unique @map("veiculo_id")
+  numberBI    String       @unique @map("numberBI") @db.VarChar(13)
+  name        String       @db.VarChar(150)
+  email       String       @unique
+  sexo        Sexo
+  status      DriverStatus @default(Off)
+  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
+  password    String       @default("0000") @map("senha")
+  tel         String       @unique @map("telefone") @db.VarChar(12)
+  nascimento  DateTime
+  avatar      String?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  recolhas Recolha[]
+  veiculo  Veiculo?   @relation(fields: [veiculoId], references: [id], onDelete: SetNull)
+  filial   Filial    @relation(fields: [filialId], references: [id], onDelete: Cascade)
+
+  @@map("driver")
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  clientId  String
+  agentId   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  endAt     DateTime @map("end_at") //data que o tal pagamento termina
+  client    Client   @relation(fields: [clientId], references: [id])
+  agent     Agents?  @relation(fields: [agentId], references: [id], onDelete: SetNull)
+
+  @@map("pagamentos")
+}
+
+model Client {
+  id       String @id @default(uuid())
+  filialId String @map("filial_id")
+  name     String @db.VarChar(250)
+  email    String @unique
+  numberBI String @unique @map("number_bi") @db.VarChar(13)
+  tel      String @unique @db.VarChar(12)
+  sexo     Sexo
+  avatar      String?
+  address     String //enderço da casa do cliente
+  coordenadas Float[]       @default([0, 0]) @db.DoublePrecision()
+  status      PaymentStatus @default(npago)
+  nascimento  DateTime
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  //relações
+  recolhas Recolha[]
+  filial   Filial    @relation(fields: [filialId], references: [id], onDelete: Cascade)
+  payments Payment[]
+}
+
+model Agents {
+  id        String    @id @default(uuid())
+  avatar    String?
+  name      String    @db.VarChar(250)
+  email     String    @unique
+  sexo      Sexo
+  tel       String    @unique @map("telefone") @db.VarChar(9)
+  password  String    @default("0000") @map("senha")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  payments  Payment[]
+}
+
+model Recolha {
+  id         String   @id @default(uuid())
+  clienteId  String   @map("cliente_id") // ñ esquecer de tirar o destino da recolha na lat e lgn do cliente
+  driverId   String   @map("motorista_id")
+  filialId   String   @map("filial_id")
+  status     Status   @default(pendente)
+  distance   String?
+  duration   String?
+  directions Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  //relações
+  client Client @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  filial Filial @relation(fields: [filialId], references: [id], onDelete: Cascade)
+}
+
 enum Status {
   pendente // pendente=> recolha atribuida para um mado motorista
   andamento //andamento => recolha a ser realizada no exacto momento pelo motorista
@@ -35,7 +172,7 @@ enum RoleEnum {
 }
 
 enum PaymentStatus {
-  expirado //pagamento espirado
+  npago //pagamento espirado
   pago //pagamento feito
 }
 
@@ -44,140 +181,7 @@ enum DriverStatus {
   Off
 }
 
-model authLinksManager {
-  id        String   @id @default(uuid())
-  code      String   @unique
-  managerId String   @map("manager_id")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  //relações
-  manager Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
-
-  @@map("auth_link_manager")
-}
-
-model Manager {
-  id        String   @id @default(uuid())
-  code      String?  @unique
-  key       String   @default("0000")
-  name      String   @db.VarChar(250)
-  tel       String   @unique @map("telefone") @db.VarChar(12)
-  email     String   @unique
-  role      RoleEnum @default(gerente)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  //relações
-  authLinksManager authLinksManager[]
-  Filial           Filial[]
-
-  @@map("manager")
-}
-
-model Filial {
-  id          String       @id @default(uuid())
-  managerId   String       @unique @map("manager_id")
-  name        String       @unique @db.VarChar(100)
-  tel         String       @unique @map("telefone") @db.VarChar(12)
-  address     String       @unique // enderço da filial da empresa
-  email       String       @unique
-  status      FilialStatus @default(fechado) //status da filial
-  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-
-  //relações
-  clientes Cliente[]
-  drivers  Driver[]
-  Recolha  Recolha[]
-  manager  Manager   @relation(fields: [managerId], references: [id], onDelete: Cascade)
-
-  @@map("filias")
-}
-
-model Veiculo {
-  id        String   @id @default(uuid())
-  matricula String   @unique @db.VarChar(11)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  Driver    Driver[]
-
-  @@map("veiculo")
-}
-
-model Driver {
-  id          String       @id @default(uuid())
-  code        String?      @unique
-  filialId    String       @map("filial_id")
-  veiculoId   String       @unique @map("veiculo_id")
-  numberBI    String       @unique @map("numberBI") @db.VarChar(13)
-  name        String       @db.VarChar(150)
-  email       String       @unique
-  status      DriverStatus @default(Off)
-  coordenadas Float[]      @default([0, 0]) @db.DoublePrecision() //explo [ 33.8475, -170.5953 ]lat,lgn
-  password    String       @default("0000") @map("senha")
-  tel         String       @unique @map("telefone") @db.VarChar(12)
-  nascimento  DateTime
-  avatar      String?
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-
-  recolhas Recolha[]
-  veiculo  Veiculo   @relation(fields: [veiculoId], references: [id])
-  filial   Filial    @relation(fields: [filialId], references: [id], onDelete: Cascade)
-
-  @@map("driver")
-}
-
-model Payment {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now()) @map("created_at")
-  endAt     DateTime  @map("end_at") //data que o tal pagamento termina
-  Cliente   Cliente[]
-
-  @@map("pagamentos")
-}
-
-model Cliente {
-  id          String        @id @default(uuid())
-  filialId    String        @map("filial_id")
-  paymentId   String        @map("payment_id")
-  name        String        @db.VarChar(250)
-  email       String        @unique
-  numberBI    String        @unique @map("number_bi") @db.VarChar(13)
-  tel         String        @unique @db.VarChar(12)
-  avatar      String?
-  address     String //enderço da casa do cliente
-  coordenadas Float[]       @default([0, 0]) @db.DoublePrecision()
-  status      PaymentStatus @default(pago)
-  nascimento  DateTime
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-
-  //relações
-  recolhas Recolha[]
-  payment  Payment   @relation(fields: [paymentId], references: [id])
-  filial   Filial    @relation(fields: [filialId], references: [id], onDelete: Cascade)
-
-  @@map("clientes")
-}
-
-model Recolha {
-  id         String   @id @default(uuid())
-  clienteId  String   @map("cliente_id") // ñ esquecer de tirar o destino da recolha na lat e lgn do cliente
-  driverId   String   @map("motorista_id")
-  filialId   String   @map("filial_id")
-  status     Status   @default(pendente)
-  distance   Float
-  duration   Float
-  directions Json
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-
-  //relações
-  cliente Cliente @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  filial  Filial  @relation(fields: [filialId], references: [id], onDelete: Cascade)
-
-  @@map("recolhas")
+enum Sexo {
+  M
+  F
 }

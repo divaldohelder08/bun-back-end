@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 const today = dayjs();
 const filiais = await db.filial.findMany();
 const motoristas = await db.driver.findMany();
-const clientes = await db.cliente.findMany();
+const clientes = await db.client.findMany();
 await db.recolha.createMany({
   data: Array.from({ length: 54 }).map(() => {
     return {

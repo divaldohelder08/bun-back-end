@@ -1,20 +1,22 @@
 import { db } from "@/db/connection";
 import dayjs from "dayjs";
-import Elysia from "elysia";
+import Elysia, { t } from "elysia";
 
-export const getAllReceiptInPeriod = new Elysia().get(
-  "/all-receipt-in-period",
-  async () => {
+export const getRecolhas = new Elysia().get(
+  "/recolhas/:filialId",
+  async ({ params }) => {
     const startDate = dayjs().subtract(1, "M");
+    const { filialId } = params;
     return await db.recolha.findMany({
       where: {
+        filialId,
         createdAt: {
           gte: startDate.startOf("day").toDate(),
         },
       },
       select: {
         id: true,
-        cliente: {
+        client: {
           select: {
             id: true,
             name: true,
@@ -29,18 +31,17 @@ export const getAllReceiptInPeriod = new Elysia().get(
             name: true,
             email: true,
             avatar: true,
-            filialId: true,
             createdAt: true,
-          },
-        },
-        filial: {
-          select: {
-            name: true,
           },
         },
         status: true,
         createdAt: true,
       },
     });
+  },
+  {
+    params: t.Object({
+      filialId: t.String({ format: "uuid" }),
+    }),
   },
 );

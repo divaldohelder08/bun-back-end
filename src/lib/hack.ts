@@ -10,6 +10,7 @@ export async function hackId() {
   });
   return { managerId: camama.managerId, filialId: camama.id };
 }
+6;
 
 export async function hackDriverId() {
   const driver = await db.driver.findFirstOrThrow({
@@ -17,6 +18,17 @@ export async function hackDriverId() {
       filialId: (await hackId()).filialId,
     },
   });
-  console.log(driver)
   return { driverId: driver.id };
+}
+
+export async function hackClientId() {
+  const client = await db.client.findFirstOrThrow({
+    where: { filialId: (await hackId()).filialId },
+    select: {
+      id: true,
+      filialId: true,
+    },
+  });
+
+  return { clientId: client.id };
 }

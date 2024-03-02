@@ -20,7 +20,7 @@ export const deleteClient = new Elysia().delete(
     }
 
     if (
-      !(await db.cliente.findUnique({
+      !(await db.client.findUnique({
         where: {
           id,
         },
@@ -29,7 +29,7 @@ export const deleteClient = new Elysia().delete(
       throw Error("Cliente não encontrado");
     }
 
-    await db.cliente.delete({
+    await db.client.delete({
       where: {
         id,
       },

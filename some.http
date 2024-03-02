@@ -7,6 +7,10 @@ Content-Type: application/json
 }
 
 
+###
+Get http://localhost:3333/manager/metrics/big-chart
+
+
 ### 
 GET   http://localhost:3333/find/drivers
 
@@ -14,4 +18,13 @@ GET   http://localhost:3333/find/drivers
 DELETE http://localhost:3333/manager/driver/delete?id=ola%mundo&key=0000
 
 ###
-DELETE http://localhost:3333/manager/client/delete?id=ola%mundo&key=0000
+GET http://localhost:3333/cooperativa/get-client-by-id/90407066-a0b9-412c-8136-5e7c18c077dd
+
+###
+
+POST http://localhost:3333/cooperativa/super-manager/authenticate
+Content-Type: application/json
+
+{
+  "email":"divaldohelder08@gmail.com"
+}
