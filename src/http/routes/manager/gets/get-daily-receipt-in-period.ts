@@ -1,7 +1,7 @@
 import { db } from "@/db/connection";
 import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
-import { authentication } from "./authentication";
+import { authentication } from "../authentication";
 
 export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
   "/daily-receipt-in-period",

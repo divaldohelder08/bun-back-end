@@ -1,4 +1,5 @@
 import { db } from "@/db/connection";
+import { hackId } from "@/lib/hack";
 import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
 
@@ -24,6 +25,7 @@ export const getClientById = new Elysia().get(
       client: await db.client.findUniqueOrThrow({
         where: {
           id,
+          filialId:(await hackId()).filialId
         },
         select: {
           avatar: true,

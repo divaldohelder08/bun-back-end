@@ -3,7 +3,7 @@ import { hackId } from "@/lib/hack";
 import Elysia from "elysia";
 
 export const getManagerProfile = new Elysia().get(
-  "/get-manager-profile",
+  "/profile",
   async () => {
     return await db.manager.findFirstOrThrow({
       where: {
@@ -12,15 +12,11 @@ export const getManagerProfile = new Elysia().get(
       select: {
         id: true,
         name: true,
+        avatar:true,
         email: true,
         role: true,
         createdAt: true,
         tel: true,
-        filial: {
-          select: {
-            status: true,
-          },
-        },
       },
     });
   },

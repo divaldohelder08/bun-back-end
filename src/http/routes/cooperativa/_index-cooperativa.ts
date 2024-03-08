@@ -14,17 +14,20 @@ import { getOverView } from "./gets/get-over-view";
 import { getSuperManagers } from "./gets/get-superManagers";
 import { indexMetrics } from "./metrics/_index-metrics";
 import { updateFilialStatus } from "./update-filial-status";
+import { getManagers } from "./gets/managers";
 
 export const indexCooperativa = new Elysia()
   .use(authenticate)
   .use(getRecolhas) // /cooperativa/recolhas
   .use(getDrivers) // /cooperativa/drivers => get
   .use(getClients) // /cooperativa/clients => get
+  .use(getManagers) // /cooperativa/managers => get
   .use(deleteClient)
   .use(getFilial) // /cooperativa/filial
   .use(getDriverById) // /cooperativa/get-driver-by-id
   .use(getClientById) // /cooperativa/get-client-by-id
   // .use(getDeleteClientById)
+
   .use(getOverView)
   .use(getSuperManagers)
   .use(updateFilialStatus)

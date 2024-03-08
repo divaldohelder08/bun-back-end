@@ -368,6 +368,21 @@ export async function seedFull({
     //   }),
     //   sexo: sex,
     // };
+    const sex = faker.helpers.enumValue(sexo);
+    const firstName = faker.person.firstName(sex === "M" ? "male" : "female");
+    const lastName = faker.person.lastName(sex === "M" ? "male" : "female");
+    const CurrentManager = {
+      name: faker.person.fullName({
+        firstName,
+        lastName,
+      }),
+      email: faker.internet.email({
+        firstName,
+        lastName,
+        provider: "mukumbo.dev",
+      }),
+      sexo: sex,
+    };
 
     await db.filial.create({
       data: {
@@ -376,15 +391,6 @@ export async function seedFull({
         address: filial.address,
         email: filial.email,
         coordenadas: filial.coordenadas,
-        manager: {
-          create: {
-            name: faker.person.fullName(),
-            email: faker.internet.email(),
-            tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
-            avatar: faker.image.avatar(),
-            sexo: faker.helpers.enumValue(sexo),
-          },
-        },
         clients: {
           create: Array.from({ length: clientsLength }).map((c) => {
             const sex = faker.helpers.enumValue(sexo);
@@ -468,6 +474,15 @@ export async function seedFull({
               },
             };
           }),
+        },
+        manager: {
+          create: {
+            name: CurrentManager.name,
+            email: CurrentManager.email,
+            tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
+            avatar: faker.image.avatar(),
+            sexo: CurrentManager.sexo,
+          },
         },
       },
     });

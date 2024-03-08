@@ -1,4 +1,5 @@
 import { db } from "@/db/connection";
+import { hackId } from "@/lib/hack";
 import dayjs from "dayjs";
 import Elysia, { t } from "elysia";
 
@@ -9,6 +10,7 @@ export const getDriverById = new Elysia().get(
 
     const driver = await db.driver.findFirst({
       where: {
+        filialId: (await hackId()).filialId,
         id,
       },
       select: {

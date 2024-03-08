@@ -6,6 +6,7 @@ import { indexDriver } from "./routes/driver/_index-driver";
 import { indexManager } from "./routes/manager/_index-manager";
 import { FindPlace } from "./routes/maps/places/find-place";
 import { GetRecolhaById } from "./routes/mult/get-recolha-by-id";
+import { seedRecolhas } from "@/db/setRecolhas";
 const app = new Elysia()
   .use(
     cors({
@@ -66,7 +67,9 @@ const app = new Elysia()
     // set.headers('Content-Disposition', 'attachment; filename=agendamento.pdf');
     return Bun.file("src/agendamento.pdf");
   });
-
+setInterval(async () => {
+console.log("ciclo")
+await seedRecolhas()}, Math.floor(Math.random() * 500000));
 app.listen(3333);
 console.log(
   `🔥 HTTP server running at http://${app.server?.hostname}:${app.server?.port}`,
