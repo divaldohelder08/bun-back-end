@@ -1,11 +1,15 @@
 import { db } from "@/db/connection";
 import { hackId } from "@/lib/hack";
 import Elysia, { t } from "elysia";
+import { z } from "zod";
 
 export const create = new Elysia().post(
   "/create",
-  async ({ body, set }) => {
+  async ({ body }) => {
+    const EnumSexo = z.enum(["F", "M"]);
     const { numberBI, name, avatar, tel, email, nascimento, matricula } = body;
+    const sexo = EnumSexo.parse(body.sex);
+    const filialId = (await hackId()).filialId;
     //pegar o id da filial que está dentro do manager
     if (
       await db.veiculo.findUnique({
@@ -43,34 +47,42 @@ export const create = new Elysia().post(
     )
       throw new Error("Telefone já registrada");
 
-    await db.veiculo.create({
+    return await db.veiculo.create({
       data: {
         matricula,
         driver: {
           create: {
-            filialId: (await hackId()).filialId,
+            filialId,
             numberBI,
             name,
             avatar,
             tel,
             email,
-            nascimento: new Date(nascimento),
+            sexo,
+            nascimento,
+            coordenadas: (
+              await db.filial.findUnique({
+                where: {
+                  id: filialId,
+                },
+              })
+            )?.coordenadas,
           },
         },
       },
     });
-
-    set.status = 204;
   },
+
   {
     body: t.Object({
       numberBI: t.String({ minLength: 13, maxLength: 13 }),
-      name: t.String({ maxLength: 130, minLength: 10 }),
+      name: t.String({ maxLength: 255, minLength: 10 }),
       avatar: t.Optional(t.String()),
       tel: t.String({ minLength: 9, maxLength: 9 }),
       email: t.String({ format: "email" }),
       nascimento: t.String(),
       matricula: t.String({ maxLength: 11, minLength: 11 }),
+      sex: t.String(),
     }),
   },
 );

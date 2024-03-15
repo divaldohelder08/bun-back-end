@@ -14,6 +14,8 @@ export const getOverView = new Elysia().get(
         tel: true,
         status: true,
         createdAt: true,
+        email: true,
+        address: true,
         _count: {
           select: {
             clients: true,

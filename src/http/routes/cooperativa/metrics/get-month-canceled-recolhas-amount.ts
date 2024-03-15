@@ -10,7 +10,7 @@ export const getMonthCancelledRecolhasAmount = new Elysia().get(
     const startOfLastMonth = lastMonth.startOf("month").toDate();
 
     const cancelledRecolhasPerMonth = await db.recolha.groupBy({
-      by: ["filialId", "createdAt"],
+      by: ["createdAt"],
       where: {
         AND: [
           { createdAt: { gte: startOfLastMonth } },

@@ -1,4 +1,5 @@
 import { db } from "@/db/connection";
+import { hackId } from "@/lib/hack";
 import dayjs from "dayjs";
 import Elysia from "elysia";
 import { authentication } from "../authentication";
@@ -11,21 +12,13 @@ export const getMonthCanceledRecolhasAmount = new Elysia()
     const lastMonth = today.subtract(1, "month");
     const startOfLastMonth = lastMonth.startOf("month").toDate();
 
-    const camamaFilial = await db.filial.findFirst({
-      where: {
-        name: {
-          contains: "Camama",
-        },
-      },
-    });
-
-    const recolhaPerMonth = await db.recolha.groupBy({
-      by: ["filialId", "status", "createdAt"],
+    const cancelledRecolhasPerMonth = await db.recolha.groupBy({
+      by: ["createdAt"],
       where: {
         AND: [
-          { filialId: camamaFilial?.id },
-          { status: "cancelada" },
+          { filialId: (await hackId()).filialId },
           { createdAt: { gte: startOfLastMonth } },
+          { status: "cancelada" }, // Adicione esta condição para considerar apenas recolhas canceladas
         ],
       },
       _count: {
@@ -33,29 +26,34 @@ export const getMonthCanceledRecolhasAmount = new Elysia()
       },
     });
 
-    const currentMonthRecolhaAmount = recolhaPerMonth.find(
-      (recolha) =>
-        recolha.createdAt.getFullYear() === today.year() &&
-        recolha.createdAt.getMonth() === today.month(),
-    );
+    const currentMonthCancelledRecolhaAmount = cancelledRecolhasPerMonth
+      .filter((recolhasInMonth) =>
+        dayjs(recolhasInMonth.createdAt).isSame(today, "month"),
+      )
+      .reduce(
+        (total, recolhasInMonth) => total + recolhasInMonth._count._all,
+        0,
+      );
 
-    const lastMonthOrdersAmount = recolhaPerMonth.find(
-      (recolha) =>
-        recolha.createdAt.getFullYear() === lastMonth.year() &&
-        recolha.createdAt.getMonth() === lastMonth.month(),
-    );
+    const lastMonthCancelledRecolhasAmount = cancelledRecolhasPerMonth
+      .filter((recolhasInMonth) =>
+        dayjs(recolhasInMonth.createdAt).isSame(lastMonth, "month"),
+      )
+      .reduce(
+        (total, recolhasInMonth) => total + recolhasInMonth._count._all,
+        0,
+      );
 
-    const diffFromLastMonth =
-      lastMonthOrdersAmount && currentMonthRecolhaAmount
-        ? (currentMonthRecolhaAmount._count._all * 100) /
-          lastMonthOrdersAmount._count._all
+    const diffFromLastMonthCancelled =
+      lastMonthCancelledRecolhasAmount && currentMonthCancelledRecolhaAmount
+        ? (currentMonthCancelledRecolhaAmount * 100) /
+          lastMonthCancelledRecolhasAmount
         : null;
 
-    console.log("me chamaram");
     return {
-      amount: currentMonthRecolhaAmount?._count._all ?? 0,
-      diffFromLastMonth: diffFromLastMonth
-        ? Number((diffFromLastMonth - 100).toFixed(2))
+      amount: currentMonthCancelledRecolhaAmount ?? 0,
+      diffFromLastMonthCancelled: diffFromLastMonthCancelled
+        ? Number((diffFromLastMonthCancelled - 100).toFixed(2))
         : 0,
     };
   });

@@ -13,14 +13,10 @@ export const getPaymentAmount = new Elysia().get(
     const PaymentPerMonth = await db.payment.groupBy({
       by: ["clientId", "createdAt"],
       where: {
-        AND: [
-          {
-            client: {
-              status: "pago",
-            },
-          },
-          { createdAt: { gte: startOfLastMonth } },
-        ],
+        client: {
+          status: "pago",
+        },
+        createdAt: { gte: startOfLastMonth },
       },
       _count: {
         _all: true,

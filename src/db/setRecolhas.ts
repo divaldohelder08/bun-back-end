@@ -1,9 +1,12 @@
 import { db } from "@/db/connection";
+import { hackId } from "@/lib/hack";
 import { fakerPT_BR as faker } from "@faker-js/faker";
 import chalk from "chalk";
+import dayjs from "dayjs";
 
 export async function seedRecolhas() {
-  const filial = await db.filial.findFirst();
+  const filial = faker.helpers.arrayElement(await db.filial.findMany());
+  //  const filial = { id: (await hackId()).filialId };
 
   if (!filial) return;
   const filialDrivers = await db.driver.findMany({
@@ -19,13 +22,14 @@ export async function seedRecolhas() {
       driverId: faker.helpers.arrayElement(filialDrivers).id,
       filialId: filial?.id,
       status: faker.helpers.arrayElement([
-        "andamento",
+        // "andamento",
         "cancelada",
-        "finalizada",
+        // "finalizada",
       ]),
       distance: faker.number.float().toString(),
       duration: faker.number.float().toString(),
       directions: JSON.stringify(faker.science.chemicalElement(), null, 2),
+      // createdAt: dayjs().subtract(10, "days").toDate(),
     },
   });
 
@@ -35,8 +39,8 @@ export async function seedRecolhas() {
       driverId: faker.helpers.arrayElement(filialDrivers).id,
       filialId: filial?.id,
       status: "pendente",
+      //  createdAt: dayjs().subtract(10, "days").toDate(),
     },
   });
   console.log(chalk.yellow("recolhas seeded"));
 }
-

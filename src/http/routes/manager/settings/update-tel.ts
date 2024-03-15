@@ -2,9 +2,9 @@ import { db } from "@/db/connection";
 import { hackId } from "@/lib/hack";
 import Elysia, { t } from "elysia";
 
-export const UpdateTel = new Elysia().post(
+export const UpdateTel = new Elysia().put(
   "/update-tel",
-  async ({ body }) => {
+  async ({ body, set }) => {
     const { tel } = body;
     await db.manager.update({
       where: {
@@ -14,6 +14,7 @@ export const UpdateTel = new Elysia().post(
         tel,
       },
     });
+    set.status = 204;
   },
   {
     body: t.Object({

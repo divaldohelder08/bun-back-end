@@ -1,7 +1,7 @@
 import { db } from "@/db/connection";
 import dayjs from "dayjs";
 import Elysia from "elysia";
-export const getFilial = new Elysia().get("/filial", async () => {
+export const getFilial = new Elysia().get("/filias", async () => {
   // const today = dayjs();
   // const weekAgo = today.subtract(1, "week");
   return await db.filial.findMany({

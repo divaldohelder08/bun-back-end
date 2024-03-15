@@ -28,7 +28,7 @@ export const getPaymentAmount = new Elysia().get(
         _all: true,
       },
     });
-
+    console.log(PaymentPerMonth);
     const currentMonthPaymentAmount = PaymentPerMonth.filter(
       (payment) =>
         payment.createdAt.getFullYear() === today.year() &&

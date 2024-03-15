@@ -356,18 +356,6 @@ export async function seedFull({
   // });
 
   for (const filial of filias) {
-    // const manager = {
-    //   name: faker.person.fullName({
-    //     firstName,
-    //     lastName,
-    //   }),
-    //   email: faker.internet.email({
-    //     firstName,
-    //     lastName,
-    //     provider: "mukumbo.dev",
-    //   }),
-    //   sexo: sex,
-    // };
     const sex = faker.helpers.enumValue(sexo);
     const firstName = faker.person.firstName(sex === "M" ? "male" : "female");
     const lastName = faker.person.lastName(sex === "M" ? "male" : "female");
@@ -375,12 +363,12 @@ export async function seedFull({
       name: faker.person.fullName({
         firstName,
         lastName,
-      }),
+      }).toLocaleLowerCase(),
       email: faker.internet.email({
         firstName,
         lastName,
         provider: "mukumbo.dev",
-      }),
+      }).toLocaleLowerCase(),
       sexo: sex,
     };
 
@@ -391,6 +379,36 @@ export async function seedFull({
         address: filial.address,
         email: filial.email,
         coordenadas: filial.coordenadas,
+        agents: {
+          create: Array.from({ length: 4 }).map((a) => {
+            const sex = faker.helpers.enumValue(sexo);
+            const firstName = faker.person.firstName(
+              sex === "M" ? "male" : "female",
+            );
+            const lastName = faker.person.lastName(
+              sex === "M" ? "male" : "female",
+            );
+            const currentAgent = {
+              name: faker.person.fullName({
+                firstName,
+                lastName,
+              }),
+              email: faker.internet.email({
+                firstName,
+                lastName,
+                provider: "mukumbo.dev",
+              }),
+              sexo: sex,
+            };
+            return {
+              name: currentAgent.name,
+              email: currentAgent.email,
+              sexo: currentAgent.sexo,
+              tel: faker.helpers.fromRegExp(/9[1-5][0-9]{7}/),
+              avatar: faker.image.avatar(),
+            };
+          }),
+        },
         clients: {
           create: Array.from({ length: clientsLength }).map((c) => {
             const sex = faker.helpers.enumValue(sexo);

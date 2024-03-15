@@ -1,19 +1,18 @@
 import { db } from "@/db/connection";
 import { hackId } from "@/lib/hack";
 import Elysia from "elysia";
-
-export const getManagerProfile = new Elysia().get("/profile", async () => {
-  return await db.manager.findFirstOrThrow({
+//Spell:ignore FILIALID_BASE
+export const getAllAgents = new Elysia().get("/agents", async () => {
+  return await db.agents.findMany({
     where: {
-      id: (await hackId()).managerId,
+      filialId: (await hackId()).filialId,
     },
     select: {
       id: true,
       name: true,
-      avatar: true,
       email: true,
-      role: true,
       createdAt: true,
+      avatar: true,
       tel: true,
     },
   });

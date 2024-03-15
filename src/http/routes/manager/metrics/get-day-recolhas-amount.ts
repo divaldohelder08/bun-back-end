@@ -1,48 +1,33 @@
 import { db } from "@/db/connection";
+import { hackId } from "@/lib/hack";
 import dayjs from "dayjs";
 import Elysia from "elysia";
-import { authentication } from "../authentication";
 interface getUserProps {
   id: string;
   filialId: string;
 }
 
-export const getDayRecolhasAmount = new Elysia()
-  .use(authentication)
-  .get("/day-recolhas-amount", async () => {
-    // if (!filialId) {
-    //   set.status = 401;
-
-    //   throw new Error("User is not a manager.");
-    // }
-    const camamaFilial = await db.filial.findFirst({
-      where: {
-        name: {
-          contains: "Camama",
-        },
-      },
-    });
-
+export const getDayRecolhasAmount = new Elysia().get(
+  "/day-recolhas-amount",
+  async () => {
     const today = dayjs();
     const yesterday = today.subtract(1, "day");
-    const startOfYesterday = yesterday.toDate();
-    console.log(today.toDate());
     const ordersPerDay = await db.recolha.groupBy({
       by: ["createdAt"],
       where: {
-        AND: [
-          { filialId: camamaFilial?.id },
-          { createdAt: { gt: startOfYesterday } },
-        ],
+        filialId: (await hackId()).filialId,
+        createdAt: {
+          gte: yesterday.toDate(),
+        },
       },
       _count: true,
     });
-    console.log(ordersPerDay);
+
     // filtrar todas as recolhas e concatenar a quantidade do dia de hoje
     const todayOrdersAmount = ordersPerDay
       .filter((orderInDay) => dayjs(orderInDay.createdAt).isSame(today, "day"))
       .reduce((total, order) => total + order._count, 0);
-    console.log("today", todayOrdersAmount);
+
     // filtrar todas as recolhas e concatenar a quantidade do dia de ontem
     const yesterdayOrdersAmount = ordersPerDay
       .filter((orderInDay) =>
@@ -63,4 +48,5 @@ export const getDayRecolhasAmount = new Elysia()
         ? Number((diffFromYesterday - 100).toFixed(2))
         : 0,
     };
-  });
+  },
+);

@@ -7,11 +7,11 @@ export const getManagerProfile = new Elysia().get(
     const { id } = params;
     return await db.manager.findFirstOrThrow({
       where: {
-        filial:{
-          some:{
-            id
-          }
-        }
+        filial: {
+          some: {
+            id,
+          },
+        },
       },
       select: {
         id: true,

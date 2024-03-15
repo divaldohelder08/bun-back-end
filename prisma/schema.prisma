@@ -37,7 +37,7 @@ model Manager {
 
 model Filial {
   id          String       @id @default(uuid())
-  managerId   String       @unique @map("manager_id")
+  managerId   String?      @unique @map("manager_id")
   name        String       @unique @db.VarChar(100)
   tel         String       @unique @map("telefone") @db.VarChar(12)
   address     String       @unique // enderço da filial da empresa
@@ -51,7 +51,8 @@ model Filial {
   clients  Client[]
   drivers  Driver[]
   recolhas Recolha[]
-  manager  Manager   @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  manager  Manager?  @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  agents   Agents[]
 }
 
 model Veiculo {
@@ -68,7 +69,7 @@ model Driver {
   id          String       @id @default(uuid())
   code        String?      @unique
   filialId    String       @map("filial_id")
-  veiculoId   String?       @unique @map("veiculo_id")
+  veiculoId   String?      @unique @map("veiculo_id")
   numberBI    String       @unique @map("numberBI") @db.VarChar(13)
   name        String       @db.VarChar(150)
   email       String       @unique
@@ -83,7 +84,7 @@ model Driver {
   updatedAt   DateTime     @updatedAt @map("updated_at")
 
   recolhas Recolha[]
-  veiculo  Veiculo?   @relation(fields: [veiculoId], references: [id], onDelete: SetNull)
+  veiculo  Veiculo?  @relation(fields: [veiculoId], references: [id], onDelete: SetNull)
   filial   Filial    @relation(fields: [filialId], references: [id], onDelete: Cascade)
 
   @@map("driver")
@@ -102,13 +103,13 @@ model Payment {
 }
 
 model Client {
-  id       String @id @default(uuid())
-  filialId String @map("filial_id")
-  name     String @db.VarChar(250)
-  email    String @unique
-  numberBI String @unique @map("number_bi") @db.VarChar(13)
-  tel      String @unique @db.VarChar(12)
-  sexo     Sexo
+  id          String        @id @default(uuid())
+  filialId    String        @map("filial_id")
+  name        String        @db.VarChar(250)
+  email       String        @unique
+  numberBI    String        @unique @map("number_bi") @db.VarChar(13)
+  tel         String        @unique @db.VarChar(12)
+  sexo        Sexo
   avatar      String?
   address     String //enderço da casa do cliente
   coordenadas Float[]       @default([0, 0]) @db.DoublePrecision()
@@ -125,14 +126,16 @@ model Client {
 
 model Agents {
   id        String    @id @default(uuid())
+  filialId  String
   avatar    String?
   name      String    @db.VarChar(250)
   email     String    @unique
   sexo      Sexo
-  tel       String    @unique @map("telefone") @db.VarChar(9)
+  tel       String?   @unique @map("telefone") @db.VarChar(9)
   password  String    @default("0000") @map("senha")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
+  filial    Filial    @relation(fields: [filialId], references: [id])
   payments  Payment[]
 }
 

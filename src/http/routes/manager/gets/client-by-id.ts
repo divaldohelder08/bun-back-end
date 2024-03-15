@@ -25,7 +25,7 @@ export const getClientById = new Elysia().get(
       client: await db.client.findUniqueOrThrow({
         where: {
           id,
-          filialId:(await hackId()).filialId
+          filialId: (await hackId()).filialId,
         },
         select: {
           avatar: true,

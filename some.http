@@ -28,3 +28,12 @@ Content-Type: application/json
 {
   "email":"divaldohelder08@gmail.com"
 }
+
+###
+PUT http://localhost:3333/manager/settings/update-key
+Content-Type: application/json
+
+{
+  "antiga":"0000",
+  "nova":"fadacfadac"
+}
