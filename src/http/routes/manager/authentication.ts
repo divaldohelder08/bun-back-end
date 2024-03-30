@@ -23,31 +23,6 @@ export const authentication = new Elysia()
         return { code, message: error.message };
     }
   })
-  .guard(
-    {
-      headers: t.Object({
-        authorization: t.TemplateLiteral("Bearer ${string}"),
-      }),
-    },
-    (app) =>
-      app
-        .resolve(({ headers: { authorization } }) => {
-          return {
-            bearer: authorization.split(" ")[1],
-          };
-        })
-        .derive(({ bearer }) => {
-          return {
-            getOwner: async () => {
-              if (!bearer) {
-                throw new UnauthorizedError();
-              }
-
-              return jwt.verify(bearer, env.JWT_SECRET_KEY) as jwtPayloadSchema;
-            },
-          };
-        }),
-  );
 
 // .use(cookie())
 // .derive(({ jwt, cookie, setCookie, removeCookie }) => {

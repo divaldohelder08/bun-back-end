@@ -14,6 +14,9 @@ import { getOverView } from "./gets/get-over-view";
 import { indexMetrics } from "./metrics/_index-metrics";
 import { indexManagerSetting } from "./settings/_index-settings";
 import { updateFilialStatus } from "./update-status";
+import { GetRecolhaById } from "./get-recolha-by-id";
+
+
 
 export const indexManager = new Elysia()
   .use(authenticate) // /manager/authenticate => Post
@@ -26,6 +29,7 @@ export const indexManager = new Elysia()
   .use(getOverView)
   .use(getManagerProfile)
   .use(updateFilialStatus)
+  .use(GetRecolhaById)
   .group("/metrics", (app) => app.use(indexMetrics))
   .group("/driver", (app) => app.use(indexDriver))
   .group("/client", (app) => app.use(indexClient))
